@@ -6,7 +6,7 @@ const axios = require('axios');
 
 const rule = new schedule.RecurrenceRule();
 // rule.hour = 0;
-rule.minute = 10;
+rule.minute = ;
 // rule.tz = 'Etc/UTC';
 schedule.scheduleJob(rule, function () {
     const url = 'https://dummyjson.com/products/1'
