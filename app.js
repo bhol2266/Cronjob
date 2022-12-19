@@ -17,6 +17,10 @@ schedule.scheduleJob('0 0 */2 * *', function () {
     axios.get(desiKahani_DeployHook)
     axios.get(chutlundscom_DeployHook)
 
+    const d = new Date();
+    let time = d.getTime();
+    console.log("Deployed at :", time);
+
 });
 app.listen(port, () => {
     console.log(`App running on port ${port}`)
