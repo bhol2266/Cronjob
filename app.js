@@ -50,8 +50,7 @@ cron.schedule("* * * */2 * *", function () {
 
 app.post('/story_detailsAPI', async (req, res) => {
 
-    const { story, story_Category } = JSON.parse(req.body)
-    console.log(req.body);
+    const { story, story_Category } = req.body
     let story_details = {}
 
     const scrape = async (url) => {
@@ -208,7 +207,7 @@ app.post('/story_detailsAPI', async (req, res) => {
         }
     } catch (error) {
         // console.log(error);
-        return res.status(200).json({ success: false, message: error, data: story_details })
+        return res.status(200).json({ success: false, message: error })
 
     }
 
