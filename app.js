@@ -1,21 +1,42 @@
 const express = require('express')
 const app = express()
-const port = 3000
-const schedule = require('node-schedule');
+const cron = require("node-cron");
+const port = process.env.PORT || 5000;
+const bodyParser = require("body-parser");
+
+const cheerio = require('cheerio');
+const fetchdata = require('node-fetch');
+const { checkStoryExists, saveStory } = require('./db_query/story_detailsQuery')
+
+
+// const schedule = require('node-schedule');
 const axios = require('axios');
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
+const mongoose = require("mongoose");
+
+mongoose.connect(
+    process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+},
+    () => {
+        console.log("Mongoose Is Connected");
+    }
+);
+
+// Middleware
+
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
 
 
 
 
-
-
-var range = new schedule.Range(1, 31, 2);  // all dates, with a step of 2
-
-// const rule = new schedule.RecurrenceRule();
-// // rule.hour = 0;
-// rule.minute = 35;
-// // rule.tz = 'Etc/UTC';
-schedule.scheduleJob({date: range, hour: 0, minute: 0},  function () {
+// Creating a cron job which runs on every 2days
+cron.schedule("* * * */2 * *", function () {
+    console.log(Date.now, "Cronjob Executed");
     const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
     const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
     const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
@@ -23,12 +44,186 @@ schedule.scheduleJob({date: range, hour: 0, minute: 0},  function () {
     axios.get(chutlundslive_DeployHook)
     axios.get(desiKahani_DeployHook)
     axios.get(chutlundscom_DeployHook)
-
-    const d = new Date();
-    let time = d.getTime();
-    console.log("Deployed at :", time);
-
 });
+
+
+
+app.post('/story_detailsAPI', async (req, res) => {
+
+    const { story, story_Category } = JSON.parse(req.body)
+    console.log(req.body);
+    let story_details = {}
+
+    const scrape = async (url) => {
+
+        var Title = ''
+        var author = {}
+        var date = ''
+        var views = ''
+        var description = []
+        var audiolink = ''
+        var storiesLink_insideParagrapgh = []
+        var relatedStoriesLinks = []
+        var category = {}
+        var tagsArray = []
+
+
+        const response = await fetchdata(url)
+        const body = await response.text();
+        const $ = cheerio.load(body)
+
+
+
+
+
+        $('.entry-title').each((i, el) => {
+
+            const data = $(el).text()
+            Title = data
+
+        })
+        //Author name and link
+
+        $('.author-name').each((i, el) => {
+            const authorName = $(el).text()
+
+            $('.url.fn.n').each((i, el) => {
+                const authorHref = $(el).attr('href')
+                author = { name: authorName, href: authorHref }
+            })
+
+        })
+
+
+
+
+
+
+        $('.posted-on time').each((i, el) => {
+
+            const data = $(el).text()
+            date = data
+
+        })
+
+
+        $('.post-views-eye').each((i, el) => {
+
+            const data = $(el).text()
+            views = data
+        })
+
+        $('.entry-content p').each((i, el) => {
+            const data = $(el).text()
+            description.push(data)
+
+        })
+
+        $('.entry-content p a').each((i, el) => {
+            const href = $(el).attr('href')
+            const data = $(el).text()
+            if (!data.includes('protected'))
+                storiesLink_insideParagrapgh.push({
+                    title: data,
+                    href: href
+                })
+        })
+
+        $('.prev a').each((i, el) => {
+            const href = $(el).attr('href')
+            const data = $(el).text()
+            if (!data.includes('protected'))
+                storiesLink_insideParagrapgh.push({
+                    title: data,
+                    href: href
+                })
+        })
+        $('.next a').each((i, el) => {
+            const href = $(el).attr('href')
+            const data = $(el).text()
+            if (!data.includes('protected'))
+                storiesLink_insideParagrapgh.push({
+                    title: data,
+                    href: href
+                })
+        })
+        $('.cat-links a').each((i, el) => {
+            const href = $(el).attr('href')
+            const data = $(el).text()
+            if (!data.includes('protected'))
+                category = {
+                    title: data,
+                    href: href
+                }
+        })
+        $('ol li a').each((i, el) => {
+            const href = $(el).attr('href')
+            const data = $(el).text()
+            relatedStoriesLinks.push({
+                title: data,
+                href: href
+            })
+        })
+
+        $('.tags-links').each((i, el) => {
+
+            const select = cheerio.load(el)
+            select('a').each((i, el) => {
+                const data = $(el).text()
+                tagsArray.push(data)
+            })
+
+        })
+
+        $('.wp-audio-shortcode source').each((i, el) => {
+            const data = $(el).attr('src')
+            audiolink = data
+
+        })
+
+
+        return story_details = {
+            Title: Title,
+            href: story,
+            author: author,
+            date: date,
+            views: views,
+            description: description,
+            audiolink: audiolink != null ? audiolink : '',
+            storiesLink_insideParagrapgh: storiesLink_insideParagrapgh,
+            category: category,
+            tagsArray: tagsArray,
+            relatedStoriesLinks: relatedStoriesLinks
+        }
+
+    }
+
+
+    try {
+
+        story_details = await checkStoryExists(story)
+        if (story_details == null) {
+            story_details = await scrape(`https://www.freesexkahani.com/${story_Category}/${story}/`)
+            await saveStory(story_details)
+        }
+    } catch (error) {
+        // console.log(error);
+        return res.status(200).json({ success: false, message: error, data: story_details })
+
+    }
+
+
+    return res.status(200).json({ success: true, data: story_details })
+})
+
+
+
+
+
+
 app.listen(port, () => {
     console.log(`App running on port ${port}`)
 })
+
+
+
