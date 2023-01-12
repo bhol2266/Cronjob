@@ -269,13 +269,13 @@ app.post('/HomepageStoriesUpdate', async (req, res) => {
 
     const { page } = req.body
 
-    let pagination_nav_pagesFinal = []
+    let pagination_nav_pages = []
     let finalDataArray_final = []
-    pagination_nav_pagesFinal.push(page)
+    pagination_nav_pages.push(page)
 
     try {
 
-        const { finalDataArray, categoryTitle, categoryDescription, pagination_nav_pages } = await freeSexkahani(`https://www.freesexkahani.com/page/1/`)
+        const { finalDataArray, categoryTitle, categoryDescription, } = await freeSexkahani(`https://www.freesexkahani.com/page/1/`)
         finalDataArray.forEach(async (item) => {
             let obj = await checkStoryItemExists(item.Title)
             if (obj == null) {
@@ -301,12 +301,12 @@ app.post('/HomepageStoriesUpdate', async (req, res) => {
         let count = await DB_COUNT()
 
         let lastPage = Math.round(count / 12)
-        pagination_nav_pagesFinal.push(lastPage.toString())
+        pagination_nav_pages.push(lastPage.toString())
 
 
         finalDataArray_final = await getStoryItemByPage(page)
 
-        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final,pagination_nav_pages:pagination_nav_pagesFinal } })
+        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final, pagination_nav_pages: pagination_nav_pages } })
 
     } catch (error) {
         console.log(error);
