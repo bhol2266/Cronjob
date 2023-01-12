@@ -8,6 +8,7 @@ const StoryItemSchema = new mongoose.Schema({
     date: { type: Number },
     views: { type: String },
     description:{ type: String },
+    category:{ type: String },
     href: { type: String },
     tags: [{ name: { type: String }, href: { type: String } }],
   

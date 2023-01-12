@@ -31,18 +31,51 @@ exports.DB_COUNT = async function () {
     return StoryItemModel.count();
 }
 
+exports.DB_COUNT_CATEGORY = async function (query) {
+    return StoryItemModel.find(query).count();
+}
+exports.DB_COUNT_TAGS = async function (query) {
+    return StoryItemModel.find(query, 'tags').count();
+}
+
+
 
 
 exports.getStoryItemByPage = async function (page) {
     let skip = parseInt(page) * 12 - 12
-
-    console.log("Page", page, "skip", skip);
     if (skip < 0) {
         skip = 0
     }
     const items = await StoryItemModel.find().sort({ 'date': -1 }).skip(skip).limit(12)
     return items
 }
+
+exports.getStoryItemByPageCategory = async function (category, page) {
+    let skip = parseInt(page) * 12 - 12
+    if (skip < 0) {
+        skip = 0
+    }
+    const items = await StoryItemModel.find({ category: category }).sort({ 'date': -1 }).skip(skip).limit(12)
+    return items
+}
+
+exports.getStoryItemByPageTag = async function (query, page) {
+    let skip = parseInt(page) * 12 - 12
+    if (skip < 0) {
+        skip = 0
+    }
+    const items = await StoryItemModel.find(query).sort({ 'date': -1 }).skip(skip).limit(12)
+    return items
+}
+
+
+exports.getStoryItemByAuthor = async function (author) {
+   
+    const items = await StoryItemModel.find({ 'author.href': author })
+    return items
+}
+
+
 
 
 

@@ -3,8 +3,11 @@ const fetchdata = require('node-fetch');
 
 
 
-exports.freeSexkahani = async function (url) {
- 
+
+
+exports.freeSexkahani = async (url) => {
+
+
   var finalDataArray = []
   var categoryTitle = ''
   var categoryDescription = ''
@@ -29,6 +32,7 @@ exports.freeSexkahani = async function (url) {
     var tags = []
     var authorName = ""
     var authorHref = ""
+    var category = ""
 
     const $ = cheerio.load(el)
 
@@ -36,6 +40,11 @@ exports.freeSexkahani = async function (url) {
 
       Title = $(el).text()
       href = $(el).attr("href")
+
+    })
+    $('.cat-links a').each((i, el) => {
+
+      category = $(el).text()
 
     })
 
@@ -52,7 +61,7 @@ exports.freeSexkahani = async function (url) {
       authorHref = data
     })
 
-    author = { name: authorName, href: authorHref }
+    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replaceAll("/", "") }
 
 
 
@@ -99,6 +108,7 @@ exports.freeSexkahani = async function (url) {
       author: author,
       date: date,
       views: views,
+      category: category,
       description: description ? description : "",
       href: href,
       tags: tags,
@@ -145,6 +155,5 @@ exports.freeSexkahani = async function (url) {
     categoryDescription: categoryDescription,
     pagination_nav_pages: pagination_nav_pages
   }
-
 
 }
