@@ -35,6 +35,9 @@ exports.DB_COUNT = async function () {
 
 exports.getStoryItemByPage = async function (page) {
     let skip = parseInt(page) * 12 - 12
+    if (skip < 0) {
+        skip = 0
+    }
     const items = await StoryItemModel.find().sort({ 'date': -1 }).skip(skip).limit(12)
     return items
 }
