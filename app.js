@@ -3,10 +3,11 @@ const app = express()
 const cron = require("node-cron");
 const port = process.env.PORT || 5000;
 const bodyParser = require("body-parser");
-
+const fs = require('fs')
 const cheerio = require('cheerio');
 const fetchdata = require('node-fetch');
-const { checkStoryExists, saveStory } = require('./db_query/story_detailsQuery')
+const { freeSexkahani } = require('./config/freeSexkahani');
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage } = require('./db_query/story_detailsQuery')
 
 
 // const schedule = require('node-schedule');
@@ -35,16 +36,62 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 5
 
 
 // Creating a cron job which runs on every 2days
-cron.schedule("* * * */2 * *", function () {
-    console.log(Date.now, "Cronjob Executed");
-    const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
-    const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
-    const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
+// try {
+//     cron.schedule("* * * */2 * *", function () {
+//         console.log(Date.now, "Cronjob Executed");
+//         const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
+//         const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
+//         const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
 
-    axios.get(chutlundslive_DeployHook)
-    axios.get(desiKahani_DeployHook)
-    axios.get(chutlundscom_DeployHook)
-});
+//         axios.get(chutlundslive_DeployHook)
+//         axios.get(desiKahani_DeployHook)
+//         axios.get(chutlundscom_DeployHook)
+//     });
+// } catch (error) {
+
+// }
+
+
+// async function insertStoryThumbnail() {
+
+
+//     for (let index = 1; index < 303; index++) {
+//         let rawdata = fs.readFileSync(`./JsonData/homepage/${index}.json`);
+//         let data = JSON.parse(rawdata);
+
+//         const { finalDataArray } = data
+//         finalDataArray.forEach(async(item) => {
+
+//             const year=item.date.substring(6,item.date.length)
+//             const month=item.date.substring(3,5)
+//             const day=item.date.substring(0,2)
+//             const completeDate=parseInt(year+month+day)
+//             console.log(completeDate);
+
+//             const parceldata= {
+//                 Title:item.Title,
+//                 author:item.author,
+//                 date:completeDate,
+//                 views:item.views,
+//                 description:item.description,
+//                 href:item.href,
+//                 tags:item.tags,
+//             }
+
+
+
+//             await saveStoryItem(parceldata)
+
+
+//         })
+//     }
+
+
+// }
+
+//  insertStoryThumbnail()
+
+
 
 
 
@@ -214,6 +261,65 @@ app.post('/story_detailsAPI', async (req, res) => {
 
     return res.status(200).json({ success: true, data: story_details })
 })
+
+
+
+
+app.post('/HomepageStoriesUpdate', async (req, res) => {
+
+    const { page } = req.body
+
+    let pagination_nav_pagesFinal = []
+    let finalDataArray_final = []
+    pagination_nav_pagesFinal.push(page)
+
+    try {
+
+        const { finalDataArray, categoryTitle, categoryDescription, pagination_nav_pages } = await freeSexkahani(`https://www.freesexkahani.com/page/1/`)
+        finalDataArray.forEach(async (item) => {
+            let obj = await checkStoryItemExists(item.Title)
+            if (obj == null) {
+
+                const year = item.date.substring(6, item.date.length)
+                const month = item.date.substring(3, 5)
+                const day = item.date.substring(0, 2)
+                const completeDate = parseInt(year + month + day)
+
+                const parceldata = {
+                    Title: item.Title,
+                    author: item.author,
+                    date: completeDate,
+                    views: item.views,
+                    description: item.description,
+                    href: item.href,
+                    tags: item.tags,
+                }
+                await saveStoryItem(parceldata)
+            }
+        })
+
+        let count = await DB_COUNT()
+
+        let lastPage = Math.round(count / 12)
+        pagination_nav_pagesFinal.push(lastPage.toString())
+
+
+        finalDataArray_final = await getStoryItemByPage(page)
+
+        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final } })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+
+})
+
+
+
+
 
 
 
