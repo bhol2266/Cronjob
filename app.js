@@ -274,29 +274,31 @@ app.post('/HomepageStoriesUpdate', async (req, res) => {
     pagination_nav_pages.push(page)
 
     try {
+        if (page === "1") {
+            const { finalDataArray, categoryTitle, categoryDescription, } = await freeSexkahani(`https://www.freesexkahani.com/page/1/`)
+            finalDataArray.forEach(async (item) => {
+                let obj = await checkStoryItemExists(item.Title)
+                if (obj == null) {
 
-        const { finalDataArray, categoryTitle, categoryDescription, } = await freeSexkahani(`https://www.freesexkahani.com/page/1/`)
-        finalDataArray.forEach(async (item) => {
-            let obj = await checkStoryItemExists(item.Title)
-            if (obj == null) {
+                    const year = item.date.substring(6, item.date.length)
+                    const month = item.date.substring(3, 5)
+                    const day = item.date.substring(0, 2)
+                    const completeDate = parseInt(year + month + day)
 
-                const year = item.date.substring(6, item.date.length)
-                const month = item.date.substring(3, 5)
-                const day = item.date.substring(0, 2)
-                const completeDate = parseInt(year + month + day)
-
-                const parceldata = {
-                    Title: item.Title,
-                    author: item.author,
-                    date: completeDate,
-                    views: item.views,
-                    description: item.description,
-                    href: item.href,
-                    tags: item.tags,
+                    const parceldata = {
+                        Title: item.Title,
+                        author: item.author,
+                        date: completeDate,
+                        views: item.views,
+                        description: item.description,
+                        href: item.href,
+                        tags: item.tags,
+                    }
+                    await saveStoryItem(parceldata)
                 }
-                await saveStoryItem(parceldata)
-            }
-        })
+            })
+        }
+
 
         let count = await DB_COUNT()
 
