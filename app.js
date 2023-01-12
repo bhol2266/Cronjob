@@ -306,7 +306,7 @@ app.post('/HomepageStoriesUpdate', async (req, res) => {
 
         finalDataArray_final = await getStoryItemByPage(page)
 
-        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final } })
+        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final,pagination_nav_pages:pagination_nav_pagesFinal } })
 
     } catch (error) {
         console.log(error);
