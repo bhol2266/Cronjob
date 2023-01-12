@@ -61,7 +61,7 @@ exports.freeSexkahani = async (url) => {
       authorHref = data
     })
 
-    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replaceAll("/", "") }
+    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replace("/", "") }
 
 
 
