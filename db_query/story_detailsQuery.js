@@ -35,6 +35,8 @@ exports.DB_COUNT = async function () {
 
 exports.getStoryItemByPage = async function (page) {
     let skip = parseInt(page) * 12 - 12
+
+    console.log("Page", page, "skip", skip);
     if (skip < 0) {
         skip = 0
     }
