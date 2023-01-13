@@ -69,10 +69,9 @@ exports.getStoryItemByAuthor = async function (author) {
     return items
 }
 
-exports.getStoryItemByDate = async function (author) {
- 
-
-    const items = await StoryItemModel.find({ 'author.href': author })
+exports.getStoryItemByDate = async function (month, year) {
+    console.log(month,year);
+    const items = await StoryItemModel.find({ 'date.month': month })
     return items
 }
 

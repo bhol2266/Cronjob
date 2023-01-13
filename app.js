@@ -478,34 +478,20 @@ app.post('/tag', async (req, res) => {
 app.post('/date', async (req, res) => {
 
     const { year, month, page } = req.body
+    var monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    let categoryTitle = ''
-    let categoryDescription = ''
-    tagJSON.forEach(item => {
-        if (item.href === tag) {
-            categoryTitle = item.tag
-            categoryDescription = item.description
-        }
-    })
+    let categoryTitle = monthArray[parseInt(month.replace(/^0+/, '')) - 1] + "-" + year
+    let categoryDescription = ""
 
-    let pagination_nav_pages = []
+
     let finalDataArray = []
 
-    pagination_nav_pages.push(page)
 
     try {
-        const query = {
-            "tags.name": categoryTitle,
-        }
-        let count = await DB_COUNT_TAGS(query)
+        finalDataArray = await getStoryItemByDate(month, year)
 
-        let lastPage = Math.round(count / 12)
-        pagination_nav_pages.push(lastPage.toString())
-
-        finalDataArray = await getStoryItemByDate(query, page)
-
-
-        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray, pagination_nav_pages: pagination_nav_pages, categoryTitle: categoryTitle, categoryDescription: categoryDescription } })
+        console.log(finalDataArray);
+        return res.status(200).json({ success: true, data: { finalDataArray: finalDataArray, categoryTitle: categoryTitle, categoryDescription: categoryDescription } })
 
     } catch (error) {
         console.log(error);
@@ -520,7 +506,7 @@ app.post('/date', async (req, res) => {
 app.post('/author', async (req, res) => {
 
     const { author } = req.body
-    let categoryTitle = author
+    let categoryTitle = " "+ author.replace("-", " ").replace("_", " ").toUpperCase()
     let categoryDescription = ''
 
 
