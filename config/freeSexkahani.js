@@ -80,7 +80,6 @@ exports.freeSexkahani = async (url) => {
       const day = data.substring(0, 2)
       completeDate = parseInt(year + month + day)
 
-      console.log(date, completeDate);
     })
 
 
