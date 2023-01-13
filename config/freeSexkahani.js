@@ -26,7 +26,7 @@ exports.freeSexkahani = async (url) => {
     var Title = ""
     var author = {}
     var date = {}
-   var completeDate = ''
+    var completeDate = ''
     var views = ""
     var description = ""
     var href = ""
@@ -62,7 +62,7 @@ exports.freeSexkahani = async (url) => {
       authorHref = data
     })
 
-    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replaceAll("/", "") }
+    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replace("/", "").replace("/", "").replace("/", "") }
 
 
 
@@ -80,7 +80,7 @@ exports.freeSexkahani = async (url) => {
       const day = data.substring(0, 2)
       completeDate = parseInt(year + month + day)
 
-      console.log(date , completeDate);
+      console.log(date, completeDate);
     })
 
 
