@@ -8,7 +8,7 @@ const cheerio = require('cheerio');
 const cors = require("cors");
 const fetchdata = require('node-fetch');
 const { freeSexkahani } = require('./config/freeSexkahani');
-const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate,randomLatestStories } = require('./db_query/story_detailsQuery')
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail } = require('./db_query/story_detailsQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
 
 
@@ -184,7 +184,7 @@ async function insertStoryThumbnail() {
 // insertStoryThumbnail()
 
 
-
+deleteStoryDetail() // remove storyDetail documents that is not scrapped properly 
 
 
 app.post('/story_detailsAPI', async (req, res) => {
