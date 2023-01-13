@@ -70,8 +70,19 @@ exports.getStoryItemByAuthor = async function (author) {
 }
 
 exports.getStoryItemByDate = async function (month, year) {
-    console.log(month,year);
+    console.log(month, year);
     const items = await StoryItemModel.find({ 'date.month': month })
+    return items
+}
+
+
+exports.randomLatestStories = async function (month, year) {
+
+    const items = await StoryItemModel.aggregate([
+        { $match: { 'date.month': month } }, // filter the results
+        { $sample: { size: 5 } } // You want to get 5 docs
+    ]);
+
     return items
 }
 

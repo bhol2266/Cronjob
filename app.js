@@ -5,9 +5,10 @@ const port = process.env.PORT || 5000;
 const bodyParser = require("body-parser");
 const fs = require('fs')
 const cheerio = require('cheerio');
+const cors = require("cors");
 const fetchdata = require('node-fetch');
 const { freeSexkahani } = require('./config/freeSexkahani');
-const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate } = require('./db_query/story_detailsQuery')
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate,randomLatestStories } = require('./db_query/story_detailsQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
 
 
@@ -32,6 +33,8 @@ mongoose.connect(
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
+app.use("*", cors());
+
 
 const categories = [
 
@@ -490,7 +493,6 @@ app.post('/date', async (req, res) => {
     try {
         finalDataArray = await getStoryItemByDate(month, year)
 
-        console.log(finalDataArray);
         return res.status(200).json({ success: true, data: { finalDataArray: finalDataArray, categoryTitle: categoryTitle, categoryDescription: categoryDescription } })
 
     } catch (error) {
@@ -506,7 +508,7 @@ app.post('/date', async (req, res) => {
 app.post('/author', async (req, res) => {
 
     const { author } = req.body
-    let categoryTitle = " "+ author.replace("-", " ").replace("_", " ").toUpperCase()
+    let categoryTitle = " " + author.replace("-", " ").replace("_", " ").toUpperCase()
     let categoryDescription = ''
 
 
@@ -527,6 +529,35 @@ app.post('/author', async (req, res) => {
 
 
 })
+
+
+app.get('/latestStories', async (req, res) => {
+
+
+    var date = new Date();
+    var currentMonth = date.getMonth() + 1
+    var currentYear = date.getFullYear()
+
+    if (currentMonth < 10) {
+        currentMonth = "0" + currentMonth.toString()
+    } else {
+        currentMonth = currentMonth.toString()
+    }
+
+    let finalDataArray = []
+
+
+    try {
+        finalDataArray = await randomLatestStories(currentMonth, currentYear.toString())
+        return res.status(200).json({ success: true, data: { finalDataArray: finalDataArray } })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+})
+
 
 
 
