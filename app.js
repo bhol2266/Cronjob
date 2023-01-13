@@ -7,7 +7,7 @@ const fs = require('fs')
 const cheerio = require('cheerio');
 const fetchdata = require('node-fetch');
 const { freeSexkahani } = require('./config/freeSexkahani');
-const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag,getStoryItemByAuthor } = require('./db_query/story_detailsQuery')
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate } = require('./db_query/story_detailsQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
 
 
@@ -167,40 +167,15 @@ const categories = [
 
 
 async function insertStoryThumbnail() {
-
-
     for (let index = 1; index < 303; index++) {
         let rawdata = fs.readFileSync(`./JsonData/homepage/${index}.json`);
         let data = JSON.parse(rawdata);
 
         const { finalDataArray } = data
         finalDataArray.forEach(async (item) => {
-
-            const year = item.date.substring(6, item.date.length)
-            const month = item.date.substring(3, 5)
-            const day = item.date.substring(0, 2)
-            const completeDate = parseInt(year + month + day)
-
-            const parceldata = {
-                Title: item.Title,
-                author: item.author,
-                category: item.category,
-                date: completeDate,
-                views: item.views,
-                description: item.description,
-                href: item.href,
-                tags: item.tags,
-            }
-
-
-
-            await saveStoryItem(parceldata)
-
-
+            await saveStoryItem(item)
         })
     }
-
-
 }
 
 // insertStoryThumbnail()
@@ -395,22 +370,7 @@ app.post('/HomepageStoriesUpdate', async (req, res) => {
             finalDataArray.forEach(async (item) => {
                 let obj = await checkStoryItemExists(item.Title)
                 if (obj == null) {
-
-                    const year = item.date.substring(6, item.date.length)
-                    const month = item.date.substring(3, 5)
-                    const day = item.date.substring(0, 2)
-                    const completeDate = parseInt(year + month + day)
-
-                    const parceldata = {
-                        Title: item.Title,
-                        author: item.author,
-                        date: completeDate,
-                        views: item.views,
-                        description: item.description,
-                        href: item.href,
-                        tags: item.tags,
-                    }
-                    await saveStoryItem(parceldata)
+                    await saveStoryItem(item)
                 }
             })
         }
@@ -515,21 +475,63 @@ app.post('/tag', async (req, res) => {
 })
 
 
+app.post('/date', async (req, res) => {
+
+    const { year, month, page } = req.body
+
+    let categoryTitle = ''
+    let categoryDescription = ''
+    tagJSON.forEach(item => {
+        if (item.href === tag) {
+            categoryTitle = item.tag
+            categoryDescription = item.description
+        }
+    })
+
+    let pagination_nav_pages = []
+    let finalDataArray = []
+
+    pagination_nav_pages.push(page)
+
+    try {
+        const query = {
+            "tags.name": categoryTitle,
+        }
+        let count = await DB_COUNT_TAGS(query)
+
+        let lastPage = Math.round(count / 12)
+        pagination_nav_pages.push(lastPage.toString())
+
+        finalDataArray = await getStoryItemByDate(query, page)
+
+
+        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray, pagination_nav_pages: pagination_nav_pages, categoryTitle: categoryTitle, categoryDescription: categoryDescription } })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+
+})
+
+
 app.post('/author', async (req, res) => {
 
     const { author } = req.body
     let categoryTitle = author
     let categoryDescription = ''
-   
+
 
     let finalDataArray = []
 
 
     try {
-      
+
         finalDataArray = await getStoryItemByAuthor(author)
 
-        return res.status(200).json({ success: true, data: {  finalDataArray: finalDataArray,  categoryTitle: categoryTitle, categoryDescription: categoryDescription } })
+        return res.status(200).json({ success: true, data: { finalDataArray: finalDataArray, categoryTitle: categoryTitle, categoryDescription: categoryDescription } })
 
     } catch (error) {
         console.log(error);

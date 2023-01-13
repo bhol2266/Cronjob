@@ -13,19 +13,15 @@ exports.saveStory = async function (data) {
     await story.save()
 }
 
-
-
 exports.checkStoryItemExists = async function (Title) {
     const storyItemExist = await StoryItemModel.findOne({ Title: Title })
     return storyItemExist
-
 }
 
 exports.saveStoryItem = async function (data) {
     const storyItem = new StoryItemModel(data)
     await storyItem.save()
 }
-
 
 exports.DB_COUNT = async function () {
     return StoryItemModel.count();
@@ -34,19 +30,17 @@ exports.DB_COUNT = async function () {
 exports.DB_COUNT_CATEGORY = async function (query) {
     return StoryItemModel.find(query).count();
 }
+
 exports.DB_COUNT_TAGS = async function (query) {
     return StoryItemModel.find(query, 'tags').count();
 }
-
-
-
 
 exports.getStoryItemByPage = async function (page) {
     let skip = parseInt(page) * 12 - 12
     if (skip < 0) {
         skip = 0
     }
-    const items = await StoryItemModel.find().sort({ 'date': -1 }).skip(skip).limit(12)
+    const items = await StoryItemModel.find().sort({ 'completeDate': -1 }).skip(skip).limit(12)
     return items
 }
 
@@ -55,25 +49,35 @@ exports.getStoryItemByPageCategory = async function (category, page) {
     if (skip < 0) {
         skip = 0
     }
-    const items = await StoryItemModel.find({ category: category }).sort({ 'date': -1 }).skip(skip).limit(12)
+    const items = await StoryItemModel.find({ category: category }).sort({ 'completeDate': -1 }).skip(skip).limit(12)
     return items
 }
+
 
 exports.getStoryItemByPageTag = async function (query, page) {
     let skip = parseInt(page) * 12 - 12
     if (skip < 0) {
         skip = 0
     }
-    const items = await StoryItemModel.find(query).sort({ 'date': -1 }).skip(skip).limit(12)
+    const items = await StoryItemModel.find(query).sort({ 'completeDate': -1 }).skip(skip).limit(12)
     return items
 }
 
 
 exports.getStoryItemByAuthor = async function (author) {
-   
     const items = await StoryItemModel.find({ 'author.href': author })
     return items
 }
+
+exports.getStoryItemByDate = async function (author) {
+ 
+
+    const items = await StoryItemModel.find({ 'author.href': author })
+    return items
+}
+
+
+
 
 
 

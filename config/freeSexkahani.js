@@ -25,7 +25,8 @@ exports.freeSexkahani = async (url) => {
 
     var Title = ""
     var author = {}
-    var date = ""
+    var date = {}
+   var completeDate = ''
     var views = ""
     var description = ""
     var href = ""
@@ -61,15 +62,25 @@ exports.freeSexkahani = async (url) => {
       authorHref = data
     })
 
-    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replace("/", "") }
+    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replaceAll("/", "") }
 
 
 
     $('.posted-on time').each((i, el) => {
 
       const data = $(el).text()
-      date = data
+      date = {
+        day: data.substring(0, 2),
+        month: data.substring(3, 5),
+        year: data.substring(6, data.length),
+      }
 
+      const year = data.substring(6, data.length)
+      const month = data.substring(3, 5)
+      const day = data.substring(0, 2)
+      completeDate = parseInt(year + month + day)
+
+      console.log(date , completeDate);
     })
 
 
@@ -108,6 +119,7 @@ exports.freeSexkahani = async (url) => {
       author: author,
       date: date,
       views: views,
+      completeDate: completeDate,
       category: category,
       description: description ? description : "",
       href: href,
