@@ -7,6 +7,7 @@ const fs = require('fs')
 const cheerio = require('cheerio');
 const fetchdata = require('node-fetch');
 const { freeSexkahani } = require('./config/freeSexkahani');
+var cors = require('cors')
 const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail } = require('./db_query/story_detailsQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
 
@@ -32,6 +33,7 @@ mongoose.connect(
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
+app.use(cors()) // Use this after the variable declaration
 
 
 const categories = [
