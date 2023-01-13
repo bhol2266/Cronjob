@@ -87,7 +87,7 @@ exports.randomLatestStories = async function (month, year) {
 }
 
 exports.deleteStoryDetail = async function () {
-    await StoryModel.deleteMany({ Title: "Oops! That page can’t be found." })
+    await StoryModel.deleteMany({date:""})
 }
 
 
