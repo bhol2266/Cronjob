@@ -11,7 +11,7 @@ const { videoPageData } = require('./config/videoPageData');
 var cors = require('cors')
 const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, } = require('./db_query/story_detailsQuery')
 
-const { saveVideoItem,randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
+const { saveVideoItem, randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
 
 const { freeSexkahaniVideo } = require("./config/freeSexkahaniVideo")
@@ -684,14 +684,14 @@ app.post('/videoPageData', async (req, res) => {
 
 
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         return res.status(200).json({ success: false, message: error })
 
     }
 
+    console.log(data);
 
-
-    return res.status(200).json({ success: true, data: story_details, finalDataArray: finalDataArray_final })
+    return res.status(200).json({ success: true, story_details: story_details, finalDataArray: finalDataArray_final })
 })
 
 

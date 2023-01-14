@@ -57,16 +57,15 @@ const videoPageData = async (url) => {
     })
 
 
-
-
-
     $('.cat-links a').each((i, el) => {
         const href = $(el).attr('href')
         const data = $(el).text()
         if (!data.includes('protected'))
+
+
             category = {
                 title: data,
-                href: href
+                href: href.substring(href.indexOf("category/") + 9, href.length).replace("/", "").replace("/", "").replace("/", "")
             }
     })
 
