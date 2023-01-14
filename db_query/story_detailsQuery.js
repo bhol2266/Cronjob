@@ -70,7 +70,7 @@ exports.getStoryItemByAuthor = async function (author) {
 }
 
 exports.getStoryItemByDate = async function (month, year) {
-    const items = await StoryItemModel.find({ 'date.month': month })
+    const items = await StoryItemModel.find({ 'date.month': month ,'date.year': year})
     return items
 }
 
