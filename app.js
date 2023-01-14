@@ -8,8 +8,13 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const { freeSexkahani } = require('./config/freeSexkahani');
 var cors = require('cors')
-const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT } = require('./db_query/story_detailsQuery')
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, } = require('./db_query/story_detailsQuery')
+
+const { saveVideoItem, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag } = require('./db_query/videoQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
+
+const { freeSexkahaniVideo } = require("./config/freeSexkahaniVideo")
+
 
 
 // const schedule = require('node-schedule');
@@ -152,20 +157,20 @@ const categories = [
 
 
 // Creating a cron job which runs on every 2days
-// try {
-//     cron.schedule("* * * */2 * *", function () {
-//         console.log(Date.now, "Cronjob Executed");
-//         const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
-//         const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
-//         const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
+try {
+    cron.schedule("0 23 */2 * *", function () {
+        console.log(Date.now, "Cronjob Executed");
+        const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
+        const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
+        const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
 
-//         axios.get(chutlundslive_DeployHook)
-//         axios.get(desiKahani_DeployHook)
-//         axios.get(chutlundscom_DeployHook)
-//     });
-// } catch (error) {
+        axios.get(chutlundslive_DeployHook)
+        axios.get(desiKahani_DeployHook)
+        axios.get(chutlundscom_DeployHook)
+    });
+} catch (error) {
 
-// }
+}
 
 
 async function insertStoryThumbnail() {
@@ -179,8 +184,20 @@ async function insertStoryThumbnail() {
         })
     }
 }
+async function insertVideoThumbnail() {
+    for (let index = 1; index <= 78; index++) {
+        let rawdata = fs.readFileSync(`./JsonData/Videos/${index}.json`);
+        let data = JSON.parse(rawdata);
+
+        const { finalDataArray } = data
+        finalDataArray.forEach(async (item) => {
+            await saveVideoItem(item)
+        })
+    }
+}
 
 // insertStoryThumbnail()
+// insertVideoThumbnail()
 
 setTimeout(() => {
     deleteStoryDetail() // remove storyDetail documents that is not scrapped properly 
@@ -474,10 +491,7 @@ app.post('/tag', async (req, res) => {
     } catch (error) {
         console.log(error);
         return res.status(200).json({ success: false, message: error })
-
     }
-
-
 })
 
 
@@ -569,6 +583,83 @@ app.get('/latestStories', async (req, res) => {
     }
 })
 
+
+
+app.post('/HomepageVideo', async (req, res) => {
+
+    const { page } = req.body
+    let categoryDescription = ""
+    let categoryTitle = ""
+    let pagination_nav_pages = []
+    let finalDataArray_final = []
+    pagination_nav_pages.push(page)
+
+    try {
+        if (page === "1") {
+            // const { finalDataArray, categoryTitle, categoryDescription, } = await freeSexkahaniVideo(`https://www.freesexkahani.com/videos/page/1/`)
+            // finalDataArray.forEach(async (item) => {
+            //     let obj = await checkVideoItemExists(item.href)
+            //     if (obj == null) {
+            //         await saveVideoItem(item)
+            //     }
+            // })
+        }
+
+        let count = await VIDEOITEMS_DB_COUNT()
+
+        let lastPage = Math.round(count / 12)
+        pagination_nav_pages.push(lastPage.toString())
+
+
+        finalDataArray_final = await getVideoItemByPage(page)
+
+        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final, pagination_nav_pages: pagination_nav_pages, categoryDescription: categoryDescription, categoryTitle: categoryTitle } })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+
+})
+
+
+app.post('/VideoByTag', async (req, res) => {
+
+    const { tag, page } = req.body
+    let categoryDescription = ""
+    let categoryTitle = tag.replace("-", " ").replace("-", " ").toUpperCase()
+
+    let pagination_nav_pages = []
+    let finalDataArray_final = []
+    pagination_nav_pages.push(page)
+
+
+    try {
+        const query = {
+            "tags.href": tag,
+        }
+
+
+        let count = await getVideoItems_DB_COUNT_TAGS(query)
+        let lastPage = Math.round(count / 12)
+        pagination_nav_pages.push(lastPage.toString())
+
+      
+        finalDataArray_final = await getVideoItemsByTag(query,page)
+
+
+        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final, pagination_nav_pages: pagination_nav_pages, categoryDescription: categoryDescription, categoryTitle: categoryTitle } })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+
+})
 
 
 
