@@ -690,7 +690,6 @@ app.post('/videoPageData', async (req, res) => {
 
     }
 
-    console.log(story_details);
 
     return res.status(200).json({ success: true, story_details: story_details, finalDataArray: finalDataArray_final })
 })
