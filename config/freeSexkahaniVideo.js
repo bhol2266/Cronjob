@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const fetchaxiosdata = require('axios');
+const axios = require('axios');
 
 
 
