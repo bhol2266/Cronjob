@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-exports.freeSexkahani = async (url) => {
+const freeSexkahani = async (url) => {
 
 
   var finalDataArray = []
@@ -11,7 +11,7 @@ exports.freeSexkahani = async (url) => {
 
 
   const response = await axios.get(url)
-  const body = await response.text();
+  const body = await response.data;
   const $$ = cheerio.load(body)
 
 
@@ -58,7 +58,7 @@ exports.freeSexkahani = async (url) => {
       authorHref = data
     })
 
-    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replace("/", "").replace("/", "").replace("/", "") }
+    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replaceAll("/", "") }
 
 
 
@@ -76,6 +76,7 @@ exports.freeSexkahani = async (url) => {
       const day = data.substring(0, 2)
       completeDate = parseInt(year + month + day)
 
+      console.log(date, completeDate);
     })
 
 
@@ -164,3 +165,32 @@ exports.freeSexkahani = async (url) => {
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+for (let index = 1; index <= 302; index++) {
+  let data = await freeSexkahani(`https://www.freesexkahani.com/page/${index}/`)
+  console.log(`PAGE-${index} COMPLETED!`);
+  console.log(data);
+  // fs.writeFileSync(`JsonData/stories/homepage/${index}.json`, JSON.stringify(data));
+}
+
+
+// var paths = []
+
+// for (let index = 1; index <= 50; index++) {
+//   paths.push({ params: { page: index.toString() } })
+// }
+
+// console.log(paths);
+
+
+
+

@@ -4,8 +4,8 @@ const cron = require("node-cron");
 const port = process.env.PORT || 5000;
 const bodyParser = require("body-parser");
 const fs = require('fs')
+const axios = require('axios');
 const cheerio = require('cheerio');
-// const fetch = require('node-fetch');
 const { freeSexkahani } = require('./config/freeSexkahani');
 var cors = require('cors')
 const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT } = require('./db_query/story_detailsQuery')
@@ -13,7 +13,6 @@ const tagJSON = require('./JsonData/TagsDetail.json')
 
 
 // const schedule = require('node-schedule');
-const axios = require('axios');
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
@@ -210,7 +209,7 @@ app.post('/story_detailsAPI', async (req, res) => {
         var tagsArray = []
 
 
-        const response = await fetch(url)
+        const response = await axios.get(url)
         const body = await response.text();
         const $ = cheerio.load(body)
 
