@@ -373,15 +373,12 @@ app.post('/HomepageStoriesUpdate', async (req, res) => {
     try {
         if (page === "1") {
             const { finalDataArray, categoryTitle, categoryDescription, } = await freeSexkahani(`https://www.freesexkahani.com/page/1/`)
-            console.log(finalDataArray);
-            if (finalDataArray.length != 0) {
-                finalDataArray.forEach(async (item) => {
-                    let obj = await checkStoryItemExists(item.Title)
-                    if (obj == null) {
-                        await saveStoryItem(item)
-                    }
-                })
-            }
+            finalDataArray.forEach(async (item) => {
+                let obj = await checkStoryItemExists(item.Title)
+                if (obj == null) {
+                    await saveStoryItem(item)
+                }
+            })
 
         }
 
