@@ -13,6 +13,10 @@ exports.saveVideo= async function (data) {
     await video.save()
 }
 
+// exports.deleteVideoDetail = async function () {
+//     await StoryModel.deleteMany({ date: "" })
+// }
+
 exports.randomVideolist = async function (month, year) {
     const items = await VideoItemModel.aggregate([{$sample: {size: 20}}])
     return items

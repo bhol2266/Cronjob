@@ -5,7 +5,7 @@ const axios = require('axios');
 
 
 
-const videoPageData = async (url) => {
+const videoPageData = async (url,href) => {
     
     var story_details = {}
    
@@ -85,6 +85,7 @@ const videoPageData = async (url) => {
     story_details = {
         Title: Title,
         thumbnail:thumbnail,
+        href:href,
         videoLink: videoLink,
         description: description,
         category: category,

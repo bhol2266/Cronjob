@@ -9,7 +9,7 @@ const cheerio = require('cheerio');
 const { freeSexkahani } = require('./config/freeSexkahani');
 const { videoPageData } = require('./config/videoPageData');
 var cors = require('cors')
-const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, } = require('./db_query/story_detailsQuery')
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT,deleteVideoDetail } = require('./db_query/story_detailsQuery')
 
 const { saveVideoItem, randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
@@ -202,6 +202,7 @@ async function insertVideoThumbnail() {
 
 setTimeout(() => {
     deleteStoryDetail() // remove storyDetail documents that is not scrapped properly 
+    // deleteVideoDetail() // remove storyDetail documents that is not scrapped properly 
 }, 10000);
 
 
@@ -676,7 +677,7 @@ app.post('/videoPageData', async (req, res) => {
 
         story_details = await checkVideoExists(video)
         if (story_details == null) {
-            story_details = await videoPageData(`https://www.freesexkahani.com/videos/${video}/`)
+            story_details = await videoPageData(`https://www.freesexkahani.com/videos/${video}/`,video)
             await saveVideo(story_details)
         }
 
@@ -689,7 +690,7 @@ app.post('/videoPageData', async (req, res) => {
 
     }
 
-    console.log(data);
+    console.log(story_details);
 
     return res.status(200).json({ success: true, story_details: story_details, finalDataArray: finalDataArray_final })
 })
