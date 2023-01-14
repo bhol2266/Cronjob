@@ -210,7 +210,7 @@ app.post('/story_detailsAPI', async (req, res) => {
 
 
         const response = await axios.get(url)
-        const body = await response.text();
+        const body = await response.data;
         const $ = cheerio.load(body)
 
 

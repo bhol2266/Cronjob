@@ -11,7 +11,7 @@ exports.freeSexkahani = async (url) => {
 
 
   const response = await axios.get(url)
-  const body = await response.text();
+  const body = await response.data;
   const $$ = cheerio.load(body)
 
 
