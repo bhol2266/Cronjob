@@ -7,10 +7,11 @@ const fs = require('fs')
 const axios = require('axios');
 const cheerio = require('cheerio');
 const { freeSexkahani } = require('./config/freeSexkahani');
+const { videoPageData } = require('./config/videoPageData');
 var cors = require('cors')
 const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, } = require('./db_query/story_detailsQuery')
 
-const { saveVideoItem, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag } = require('./db_query/videoQuery')
+const { saveVideoItem,randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
 
 const { freeSexkahaniVideo } = require("./config/freeSexkahaniVideo")
@@ -596,13 +597,13 @@ app.post('/HomepageVideo', async (req, res) => {
 
     try {
         if (page === "1") {
-            // const { finalDataArray, categoryTitle, categoryDescription, } = await freeSexkahaniVideo(`https://www.freesexkahani.com/videos/page/1/`)
-            // finalDataArray.forEach(async (item) => {
-            //     let obj = await checkVideoItemExists(item.href)
-            //     if (obj == null) {
-            //         await saveVideoItem(item)
-            //     }
-            // })
+            const { finalDataArray, categoryTitle, categoryDescription, } = await freeSexkahaniVideo(`https://www.freesexkahani.com/videos/page/1/`)
+            finalDataArray.forEach(async (item) => {
+                let obj = await checkVideoItemExists(item.href)
+                if (obj == null) {
+                    await saveVideoItem(item)
+                }
+            })
         }
 
         let count = await VIDEOITEMS_DB_COUNT()
@@ -646,8 +647,8 @@ app.post('/VideoByTag', async (req, res) => {
         let lastPage = Math.round(count / 12)
         pagination_nav_pages.push(lastPage.toString())
 
-      
-        finalDataArray_final = await getVideoItemsByTag(query,page)
+
+        finalDataArray_final = await getVideoItemsByTag(query, page)
 
 
         return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final, pagination_nav_pages: pagination_nav_pages, categoryDescription: categoryDescription, categoryTitle: categoryTitle } })
@@ -665,7 +666,33 @@ app.post('/VideoByTag', async (req, res) => {
 
 
 
+app.post('/videoPageData', async (req, res) => {
 
+    const { video } = req.body
+    let story_details = {}
+    let finalDataArray_final = []
+
+    try {
+
+        story_details = await checkVideoExists(video)
+        if (story_details == null) {
+            story_details = await videoPageData(`https://www.freesexkahani.com/videos/${video}/`)
+            await saveVideo(story_details)
+        }
+
+        finalDataArray_final = await randomVideolist()
+
+
+    } catch (error) {
+        // console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+
+
+    return res.status(200).json({ success: true, data: story_details, finalDataArray: finalDataArray_final })
+})
 
 
 

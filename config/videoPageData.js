@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const fetchdata = require('node-fetch');
+const axios = require('axios');
 
 
 
@@ -18,8 +18,8 @@ const videoPageData = async (url) => {
     var tagsArray = []
 
 
-    const response = await fetchdata(url)
-    const body = await response.text();
+    const response = await axios.get(url)
+    const body = await response.data;
     const $ = cheerio.load(body)
 
     // fs.writeFileSync(`Home.html`, body);

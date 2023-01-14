@@ -1,4 +1,23 @@
 const VideoItemModel = require('../models/VideoItemModel') //homepage story item
+const VideoModel = require('../models/VideoModel') //homepage story item
+
+
+exports.checkVideoExists = async function (href) {
+    const storyExist = await VideoModel.findOne({ href: href })
+    return storyExist
+
+}
+
+exports.saveVideo= async function (data) {
+    const story = new VideoModel(data)
+    await story.save()
+}
+
+exports.randomVideolist = async function (month, year) {
+    const items = await VideoItemModel.aggregate([{$sample: {size: 20}}])
+    return items
+}
+
 
 
 exports.checkVideoItemExists = async function (story) {
@@ -6,10 +25,6 @@ exports.checkVideoItemExists = async function (story) {
     return videoExist
 }
 
-// exports.saveVideo = async function (data) {
-//     const story = new VideoItemModel(data)
-//     await story.save()
-// }
 
 exports.saveVideoItem = async function (data) {
     const storyItem = new VideoItemModel(data)
