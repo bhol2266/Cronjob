@@ -5,7 +5,7 @@ const port = process.env.PORT || 5000;
 const bodyParser = require("body-parser");
 const fs = require('fs')
 const cheerio = require('cheerio');
-const fetchdata = require('node-fetch');
+// const fetch = require('node-fetch');
 const { freeSexkahani } = require('./config/freeSexkahani');
 var cors = require('cors')
 const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT } = require('./db_query/story_detailsQuery')
@@ -210,7 +210,7 @@ app.post('/story_detailsAPI', async (req, res) => {
         var tagsArray = []
 
 
-        const response = await fetchdata(url)
+        const response = await fetch(url)
         const body = await response.text();
         const $ = cheerio.load(body)
 

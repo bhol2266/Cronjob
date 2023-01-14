@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const fetchdata = require('node-fetch');
+// const fetchdata = require('node-fetch');
 
 
 
@@ -14,7 +14,7 @@ exports.freeSexkahani = async (url) => {
   var pagination_nav_pages = []
 
 
-  const response = await fetchdata(url)
+  const response = await fetch(url)
   const body = await response.text();
   const $$ = cheerio.load(body)
 
