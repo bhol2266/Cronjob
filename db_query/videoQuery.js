@@ -3,14 +3,14 @@ const VideoModel = require('../models/VideoModel') //homepage story item
 
 
 exports.checkVideoExists = async function (href) {
-    const storyExist = await VideoModel.findOne({ href: href })
-    return storyExist
+    const videoExist = await VideoModel.findOne({ href: href })
+    return videoExist
 
 }
 
 exports.saveVideo= async function (data) {
-    const story = new VideoModel(data)
-    await story.save()
+    const video = new VideoModel(data)
+    await video.save()
 }
 
 exports.randomVideolist = async function (month, year) {
