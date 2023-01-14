@@ -8,7 +8,7 @@ const cheerio = require('cheerio');
 const fetchdata = require('node-fetch');
 const { freeSexkahani } = require('./config/freeSexkahani');
 var cors = require('cors')
-const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail } = require('./db_query/story_detailsQuery')
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT } = require('./db_query/story_detailsQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
 
 
@@ -183,8 +183,11 @@ async function insertStoryThumbnail() {
 
 // insertStoryThumbnail()
 
+setTimeout(() => {
+    deleteStoryDetail() // remove storyDetail documents that is not scrapped properly 
+}, 10000);
 
-deleteStoryDetail() // remove storyDetail documents that is not scrapped properly 
+
 
 
 app.post('/story_detailsAPI', async (req, res) => {
@@ -481,19 +484,27 @@ app.post('/tag', async (req, res) => {
 app.post('/date', async (req, res) => {
 
     const { year, month, page } = req.body
+
     var monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     let categoryTitle = monthArray[parseInt(month.replace(/^0+/, '')) - 1] + "-" + year
     let categoryDescription = ""
 
 
+    let pagination_nav_pages = []
     let finalDataArray = []
+
+    pagination_nav_pages.push(page)
+    let count = await getStoryItemByDateCOUNT(month, year)
+    let lastPage = Math.round(count / 12)
+    pagination_nav_pages.push(lastPage.toString())
+
 
 
     try {
-        finalDataArray = await getStoryItemByDate(month, year)
+        finalDataArray = await getStoryItemByDate(month, year, page)
 
-        return res.status(200).json({ success: true, data: { finalDataArray: finalDataArray, categoryTitle: categoryTitle, categoryDescription: categoryDescription } })
+        return res.status(200).json({ success: true, data: { finalDataArray: finalDataArray, categoryTitle: categoryTitle, categoryDescription: categoryDescription, pagination_nav_pages: pagination_nav_pages } })
 
     } catch (error) {
         console.log(error);

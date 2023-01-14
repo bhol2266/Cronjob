@@ -69,10 +69,18 @@ exports.getStoryItemByAuthor = async function (author) {
     return items
 }
 
-exports.getStoryItemByDate = async function (month, year) {
-    const items = await StoryItemModel.find({ 'date.month': month ,'date.year': year}).sort({ 'completeDate': -1 })
+exports.getStoryItemByDate = async function (month, year, page) {
+    let skip = parseInt(page) * 12 - 12
+    if (skip < 0) {
+        skip = 0
+    } const items = await StoryItemModel.find({ 'date.month': month, 'date.year': year }).sort({ 'completeDate': -1 }).skip(skip).limit(12)
     return items
 }
+
+exports.getStoryItemByDateCOUNT = async function (month, year) {
+    return StoryItemModel.find({ 'date.month': month, 'date.year': year }).count();
+}
+
 
 
 exports.randomLatestStories = async function (month, year) {
@@ -86,7 +94,7 @@ exports.randomLatestStories = async function (month, year) {
 }
 
 exports.deleteStoryDetail = async function () {
-    await StoryModel.deleteMany({date:""})
+    await StoryModel.deleteMany({ date: "" })
 }
 
 
