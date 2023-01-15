@@ -8,10 +8,14 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const { freeSexkahani } = require('./config/freeSexkahani');
 const { videoPageData } = require('./config/videoPageData');
+const { hotdesipics } = require('./config/hotdesipics');
+const { fullalbum } = require('./config/fullalbumScrap');
 var cors = require('cors')
-const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT,deleteVideoDetail } = require('./db_query/story_detailsQuery')
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, deleteVideoDetail } = require('./db_query/story_detailsQuery')
 
 const { saveVideoItem, randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
+
+const { checkPicItemExists, savePicItem, PICITEMS_DB_COUNT, getPicItemByPage, checkPicExists, savePic, randomPiclist } = require('./db_query/PicsQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
 
 const { freeSexkahaniVideo } = require("./config/freeSexkahaniVideo")
@@ -159,14 +163,20 @@ const categories = [
 
 // Creating a cron job which runs on every 2days
 try {
-    cron.schedule("0 23 */2 * *", function () {
+
+    cron.schedule('0 0 * * *', () => {
+        axios.get("http://desikahaniya.in/api/revalidate")
+        console.log('running revalidate task every day');
+    });
+
+    cron.schedule("0 0 */3 * *", function () {
         console.log(Date.now, "Cronjob Executed");
         const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
         const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
         const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
 
         axios.get(chutlundslive_DeployHook)
-        axios.get(desiKahani_DeployHook)
+        // axios.get(desiKahani_DeployHook)
         axios.get(chutlundscom_DeployHook)
     });
 } catch (error) {
@@ -197,8 +207,19 @@ async function insertVideoThumbnail() {
     }
 }
 
+async function insertPicThumbnail() {
+    for (let index = 1; index <= 106; index++) {
+        let rawdata = fs.readFileSync(`./JsonData/pics/${index}.json`);
+        let data = JSON.parse(rawdata);
+        data.forEach(async (item) => {
+            await savePicItem(item)
+        })
+    }
+}
+
 // insertStoryThumbnail()
 // insertVideoThumbnail()
+// insertPicThumbnail()
 
 setTimeout(() => {
     deleteStoryDetail() // remove storyDetail documents that is not scrapped properly 
@@ -677,7 +698,7 @@ app.post('/videoPageData', async (req, res) => {
 
         story_details = await checkVideoExists(video)
         if (story_details == null) {
-            story_details = await videoPageData(`https://www.freesexkahani.com/videos/${video}/`,video)
+            story_details = await videoPageData(`https://www.freesexkahani.com/videos/${video}/`, video)
             await saveVideo(story_details)
         }
 
@@ -693,6 +714,71 @@ app.post('/videoPageData', async (req, res) => {
 
     return res.status(200).json({ success: true, story_details: story_details, finalDataArray: finalDataArray_final })
 })
+
+
+app.post('/HomepagePics', async (req, res) => {
+
+    const { page } = req.body
+    let pagination_nav_pages = []
+    let finalDataArray_final = []
+    pagination_nav_pages.push(page)
+    try {
+        if (page === "1") {
+            const finalDataArray = await hotdesipics(`https://hotdesipics.co/main/page/${page}/`)
+            finalDataArray.forEach(async (item) => {
+                let obj = await checkPicItemExists(item.fullalbum_href)
+                if (obj == null) {
+                    await savePicItem(item)
+                }
+            })
+        }
+
+        let count = await PICITEMS_DB_COUNT()
+
+        let lastPage = Math.round(count / 12)
+        pagination_nav_pages.push(lastPage.toString())
+
+
+        finalDataArray_final = await getPicItemByPage(page)
+
+        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final, pagination_nav_pages: pagination_nav_pages } })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+
+})
+
+app.post('/fullalbum', async (req, res) => {
+
+    const { photoAlbum } = req.body
+    let dataobject = {}
+    let finalDataArray_final = []
+
+
+    try {
+
+        dataobject = await checkPicExists(photoAlbum)
+        if (dataobject == null) {
+            dataobject = await fullalbum(photoAlbum)
+            await savePic(dataobject)
+        }
+
+        finalDataArray_final = await randomPiclist()
+
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+
+    return res.status(200).json({ success: true, dataobject: dataobject, finalDataArray: finalDataArray_final })
+})
+
 
 
 
