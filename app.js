@@ -19,7 +19,9 @@ const { checkPicItemExists, savePicItem, PICITEMS_DB_COUNT, getPicItemByPage, ch
 const tagJSON = require('./JsonData/TagsDetail.json')
 
 const { freeSexkahaniVideo } = require("./config/freeSexkahaniVideo")
-
+const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
+const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
+const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
 
 
 // const schedule = require('node-schedule');
@@ -164,24 +166,24 @@ const categories = [
 // Creating a cron job which runs on every 2days
 try {
 
-    cron.schedule('0 0 * * *', () => {
-        axios.get("http://desikahaniya.in/api/revalidate")
-        console.log('running revalidate task every day');
-    });
+    // cron.schedule('0 0 * * *', () => {
+    //     axios.get("http://desikahaniya.in/api/revalidate")
+    //     console.log('running revalidate task every day');
+    // });
 
     cron.schedule("0 0 */3 * *", function () {
         console.log(Date.now, "Cronjob Executed");
-        const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
-        const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
-        const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
-
         axios.get(chutlundslive_DeployHook)
         // axios.get(desiKahani_DeployHook)
         axios.get(chutlundscom_DeployHook)
+        
     });
 } catch (error) {
 
 }
+
+
+
 
 
 async function insertStoryThumbnail() {
