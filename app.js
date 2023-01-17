@@ -15,7 +15,7 @@ const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COU
 
 const { saveVideoItem, randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
 
-const { saveForm } = require('./db_query/CodeoutsQuery')
+const { saveForm, getAllforms } = require('./db_query/CodeoutsQuery')
 
 const { checkPicItemExists, savePicItem, PICITEMS_DB_COUNT, getPicItemByPage, checkPicExists, savePic, randomPiclist } = require('./db_query/PicsQuery')
 const tagJSON = require('./JsonData/TagsDetail.json')
@@ -799,9 +799,24 @@ app.post('/codeouts', async (req, res) => {
 
     }
 
-
     return res.status(200).json({ success: true, message: "Form Uploaded" })
 })
+
+app.get('/codeoutsform', async (req, res) => {
+
+    let forms = []
+    try {
+
+        forms = await getAllforms()
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+    return res.status(200).json({ success: true, message: "Form Uploaded", data: forms })
+})
+
 
 
 

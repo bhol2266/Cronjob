@@ -6,3 +6,9 @@ exports.saveForm = async function (data) {
     const form = new Codeouts(data)
     await form.save()
 }
+
+exports.getAllforms = async function () {
+    const items = await StoryModel.find()
+    return items
+
+}
