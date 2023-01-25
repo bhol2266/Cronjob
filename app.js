@@ -15,7 +15,7 @@ const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COU
 
 const { saveVideoItem, randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
 
-const { savePublishStory } = require('./db_query/publishStoryQuery')
+const { savePublishStory, checkPublishStoryExist } = require('./db_query/publishStoryQuery')
 
 const { saveForm, getAllforms } = require('./db_query/CodeoutsQuery')
 
@@ -822,7 +822,16 @@ app.get('/codeoutsform', async (req, res) => {
 app.post('/publishStory', async (req, res) => {
 
     try {
-        await savePublishStory(req.body)
+
+        const storyExist = await checkPublishStoryExist(req.body.Title)
+        if (storyExist == null) {
+            await savePublishStory(req.body)
+            return res.status(200).json({ success: true, message: "Story sent for verification" })
+
+        } else {
+            return res.status(200).json({ success: true, message: "Story with same title exists" })
+
+        }
     } catch (error) {
         console.log(error);
         return res.status(200).json({ success: false, message: error })
@@ -830,7 +839,6 @@ app.post('/publishStory', async (req, res) => {
     }
 
 
-    return res.status(200).json({ success: true, message:"Story sent for verification" })
 })
 
 
