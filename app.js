@@ -15,6 +15,8 @@ const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COU
 
 const { saveVideoItem, randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
 
+const { savePublishStory } = require('./db_query/publishStoryQuery')
+
 const { saveForm, getAllforms } = require('./db_query/CodeoutsQuery')
 
 const { checkPicItemExists, savePicItem, PICITEMS_DB_COUNT, getPicItemByPage, checkPicExists, savePic, randomPiclist } = require('./db_query/PicsQuery')
@@ -816,6 +818,21 @@ app.get('/codeoutsform', async (req, res) => {
 
     return res.status(200).json({ success: true, message: "Form Uploaded", data: forms })
 })
+
+app.post('/publishStory', async (req, res) => {
+
+    try {
+        await savePublishStory(req.body)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+
+    return res.status(200).json({ success: true, message:"Story sent for verification" })
+})
+
 
 
 
