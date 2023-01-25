@@ -823,7 +823,7 @@ app.post('/publishStory', async (req, res) => {
 
     try {
 
-        const storyExist = await checkPublishStoryExist(req.body.Title)
+        const storyExist = await checkPublishStoryExist(req.body.Title,req.body.email)
         if (storyExist == null) {
             await savePublishStory(req.body)
             return res.status(200).json({ success: true, message: "Story sent for verification" })

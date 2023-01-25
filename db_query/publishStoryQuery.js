@@ -1,8 +1,8 @@
 const PublishStoryModel = require('../models/PublishStoryModel')  // main story page
 
 
-exports.checkPublishStoryExist = async function (title) {
-    const storyExist = await PublishStoryModel.findOne({ Title: title })
+exports.checkPublishStoryExist = async function (title, email) {
+    const storyExist = await PublishStoryModel.findOne({ Title: title, email: email })
     return storyExist
 
 }
