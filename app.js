@@ -172,8 +172,7 @@ try {
 
     cron.schedule('0 0 * * *', () => {
         axios.get("http://desikahaniya.in/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf").then(function (response) {
-            console.log(response.data, Date.now());
-
+            console.log(response.data);
         })
 
     });
