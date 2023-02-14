@@ -2,8 +2,8 @@ const StoryModel = require('../models/StoryModel')  // main story page
 const StoryItemModel = require('../models/StoryItemModel') //homepage story item
 
 
-exports.checkStoryExists = async function (story) {
-    const storyExist = await StoryModel.findOne({ href: story })
+exports.checkStoryExists = async function (href) {
+    const storyExist = await StoryModel.find({ href: href })
     return storyExist
 
 }
@@ -93,8 +93,13 @@ exports.randomLatestStories = async function (month, year) {
     return items
 }
 
-exports.deleteStoryDetail = async function () {
-    await StoryModel.deleteMany({ date: "" })
+exports.deleteStoryDetail = async function (href) {
+    await StoryModel.deleteOne({ href: href })
+}
+
+exports.getAllStoryItems = async function () {
+    const storyItemsArray = await StoryModel.find()
+    return storyItemsArray
 }
 
 

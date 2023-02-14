@@ -10,7 +10,7 @@ const StoryItemSchema = new mongoose.Schema({
     views: { type: String },
     description: { type: String },
     category: { type: String },
-    href: { type: String },
+    href:  {type: String, unique: true},
     tags: [{ name: { type: String }, href: { type: String } }],
 
 

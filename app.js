@@ -11,7 +11,7 @@ const { videoPageData } = require('./config/videoPageData');
 const { hotdesipics } = require('./config/hotdesipics');
 const { fullalbum } = require('./config/fullalbumScrap');
 var cors = require('cors')
-const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, deleteVideoDetail } = require('./db_query/story_detailsQuery')
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, deleteVideoDetail, getAllStoryItems } = require('./db_query/story_detailsQuery')
 
 const { saveVideoItem, randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
 
@@ -823,7 +823,7 @@ app.post('/publishStory', async (req, res) => {
 
     try {
 
-        const storyExist = await checkPublishStoryExist(req.body.Title,req.body.email)
+        const storyExist = await checkPublishStoryExist(req.body.Title, req.body.email)
         if (storyExist == null) {
             await savePublishStory(req.body)
             return res.status(200).json({ success: true, message: "Story sent for verification" })
@@ -840,6 +840,69 @@ app.post('/publishStory', async (req, res) => {
 
 
 })
+
+//Deso Kahani Mobile App APIs
+app.get('/fetchAllstories', async (req, res) => {
+
+    try {
+
+        const storyItemsArray = await getAllStoryItems()
+        console.log(storyItemsArray.length);
+        if (storyItemsArray.length == null) {
+            return res.status(200).json({ success: false, message: "no stories" })
+
+        } else {
+            return res.status(200).json({ success: true, data: storyItemsArray, message: "All story Items" })
+
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+})
+
+app.get('/storiesDetails', async (req, res) => {
+
+    try {
+        const story_details = await checkStoryExists(item.href)
+
+
+        const storyItemsArray = await getAllStoryItems()
+        console.log(storyItemsArray.length);
+        if (storyItemsArray.length == null) {
+            return res.status(200).json({ success: false, message: "no stories" })
+
+        } else {
+            return res.status(200).json({ success: true, data: storyItemsArray, message: "All story Items" })
+
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error })
+
+    }
+
+})
+
+
+
+app.get('/removeDulplicates', async (req, res) => {
+
+
+    const { href } = req.body
+
+    const allStories = await getAllStoryItems();
+
+    const story_details = await checkStoryExists(href)
+console.log(story_details);
+    return res.status(200).json({ success: true, data: story_details, message: href })
+
+
+})
+
+
 
 
 
