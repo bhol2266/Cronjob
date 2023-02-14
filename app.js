@@ -864,42 +864,16 @@ app.get('/fetchAllstories', async (req, res) => {
 
 app.get('/storiesDetails', async (req, res) => {
 
-    try {
-        const story_details = await checkStoryExists(item.href)
-
-
-        const storyItemsArray = await getAllStoryItems()
-        console.log(storyItemsArray.length);
-        if (storyItemsArray.length == null) {
-            return res.status(200).json({ success: false, message: "no stories" })
-
-        } else {
-            return res.status(200).json({ success: true, data: storyItemsArray, message: "All story Items" })
-
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(200).json({ success: false, message: error })
-
-    }
-
-})
-
-
-
-app.get('/removeDulplicates', async (req, res) => {
-
-
     const { href } = req.body
 
-    const allStories = await getAllStoryItems();
-
     const story_details = await checkStoryExists(href)
-console.log(story_details);
+    console.log(story_details);
     return res.status(200).json({ success: true, data: story_details, message: href })
 
-
 })
+
+
+
 
 
 

@@ -3,7 +3,7 @@ const StoryItemModel = require('../models/StoryItemModel') //homepage story item
 
 
 exports.checkStoryExists = async function (href) {
-    const storyExist = await StoryModel.find({ href: href })
+    const storyExist = await StoryModel.findOne({ href: href })
     return storyExist
 
 }
