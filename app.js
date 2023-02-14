@@ -866,7 +866,7 @@ app.post('/storiesDetails', async (req, res) => {
 
     const { href } = req.body
     const story_details = await checkStoryExists(href)
-    return res.status(200).json({ success: true, data: story_details.description.join(" "), message: href })
+    return res.status(200).json({ success: true, data: story_details.description.join("\n\n"), message: href })
 
 })
 
