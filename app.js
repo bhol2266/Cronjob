@@ -172,17 +172,16 @@ try {
 
     cron.schedule('0 0 * * *', () => {
         axios.get("http://desikahaniya.in/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf").then(function (response) {
-            console.log(response.data, Date.now());
-
-        })
+            console.log(response.data);
+        }).catch(error => console.log(error))
 
     });
 
     cron.schedule("0 0 */3 * *", function () {
         console.log(Date.now, "Cronjob Executed");
-        axios.get(chutlundslive_DeployHook)
+        axios.get(chutlundslive_DeployHook).catch(error => console.log(error))
         // axios.get(desiKahani_DeployHook)
-        axios.get(chutlundscom_DeployHook)
+        axios.get(chutlundscom_DeployHook).catch(error => console.log(error))
 
     });
 } catch (error) {
