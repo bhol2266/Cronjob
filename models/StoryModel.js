@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const StoryDetailSchema = new mongoose.Schema({
 
-    Title: { type: String },
-    href: { type: String },
+    Title: {type: String},
+    href:  {type: String, unique: true},
     author: { name: { type: String }, href: { type: String } },
     date: { type: String },
     views: { type: String },
@@ -15,8 +15,8 @@ const StoryDetailSchema = new mongoose.Schema({
     relatedStoriesLinks: [{ title: { type: String }, href: { type: String } }],
 
 
-}, {  timestamps: true })
+}, { timestamps: true })
 
-mongoose.models={}
+mongoose.models = {}
 module.exports = mongoose.model('StoryModel', StoryDetailSchema)
 
