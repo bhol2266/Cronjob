@@ -847,7 +847,7 @@ app.get('/updateStories_inDB', async (req, res) => {
 
     try {
 
-        const storyItemsArray = await getStoryItems_forApp(completeDate)
+        const storyItemsArray = await getStoryItems_forApp(parseInt(completeDate))
         console.log(storyItemsArray.length);
         if (storyItemsArray.length == null) {
             return res.status(200).json({ success: false, message: "no stories" })
