@@ -841,7 +841,7 @@ app.post('/publishStory', async (req, res) => {
 })
 
 //Deso Kahani Mobile App APIs
-app.get('/updateStories_inDB', async (req, res) => {
+app.post('/updateStories_inDB', async (req, res) => {
 
     const { completeDate } = req.body
 
