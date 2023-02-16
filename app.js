@@ -27,7 +27,6 @@ const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/
 const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
 const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
 
-
 // const schedule = require('node-schedule');
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
@@ -190,6 +189,8 @@ try {
 
 
 
+
+
 async function insertStoryThumbnail() {
     for (let index = 1; index < 303; index++) {
         let rawdata = fs.readFileSync(`./JsonData/homepage/${index}.json`);
@@ -246,6 +247,7 @@ app.post('/story_detailsAPI', async (req, res) => {
         var Title = ''
         var author = {}
         var date = ''
+        var completeDate = null
         var views = ''
         var description = []
         var audiolink = ''
@@ -290,6 +292,11 @@ app.post('/story_detailsAPI', async (req, res) => {
 
             const data = $(el).text()
             date = data
+            const year = data.substring(6, data.length)
+            const month = data.substring(3, 5)
+            const day = data.substring(0, 2)
+            completeDate = parseInt(year + month + day)
+      
 
         })
 
@@ -374,6 +381,7 @@ app.post('/story_detailsAPI', async (req, res) => {
             href: story,
             author: author,
             date: date,
+            completeDate: completeDate,
             views: views,
             description: description,
             audiolink: audiolink != null ? audiolink : '',
@@ -844,6 +852,7 @@ app.post('/publishStory', async (req, res) => {
 app.post('/updateStories_inDB', async (req, res) => {
 
     const { completeDate } = req.body
+    console.log(completeDate);
 
     try {
 
