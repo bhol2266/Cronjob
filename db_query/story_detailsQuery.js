@@ -97,8 +97,8 @@ exports.deleteStoryDetail = async function (href) {
     await StoryModel.deleteOne({ href: href })
 }
 
-exports.getAllStoryItems = async function () {
-    const storyItemsArray = await StoryModel.find()
+exports.getStoryItems_forApp = async function (completeDate) {
+    const storyItemsArray = await StoryModel.find({ completeDate: { $gt: completeDate } })
     return storyItemsArray
 }
 

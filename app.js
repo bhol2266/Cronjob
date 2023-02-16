@@ -11,7 +11,7 @@ const { videoPageData } = require('./config/videoPageData');
 const { hotdesipics } = require('./config/hotdesipics');
 const { fullalbum } = require('./config/fullalbumScrap');
 var cors = require('cors')
-const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, deleteVideoDetail, getAllStoryItems } = require('./db_query/story_detailsQuery')
+const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, deleteVideoDetail, getStoryItems_forApp } = require('./db_query/story_detailsQuery')
 
 const { saveVideoItem, randomVideolist, checkVideoItemExists, VIDEOITEMS_DB_COUNT, getVideoItemByPage, getVideoItems_DB_COUNT_TAGS, getVideoItemsByTag, checkVideoExists, saveVideo } = require('./db_query/videoQuery')
 
@@ -841,11 +841,13 @@ app.post('/publishStory', async (req, res) => {
 })
 
 //Deso Kahani Mobile App APIs
-app.get('/fetchAllstories', async (req, res) => {
+app.get('/updateStories_inDB', async (req, res) => {
+
+    const { completeDate } = req.body
 
     try {
 
-        const storyItemsArray = await getAllStoryItems()
+        const storyItemsArray = await getStoryItems_forApp(completeDate)
         console.log(storyItemsArray.length);
         if (storyItemsArray.length == null) {
             return res.status(200).json({ success: false, message: "no stories" })
