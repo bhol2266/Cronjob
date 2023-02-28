@@ -10,6 +10,7 @@ const { freeSexkahani } = require('./config/freeSexkahani');
 const { videoPageData } = require('./config/videoPageData');
 const { hotdesipics } = require('./config/hotdesipics');
 const { fullalbum } = require('./config/fullalbumScrap');
+const { freeSexkahaniStory_details } = require('./config/freeSexkahaniStory_details');
 var cors = require('cors')
 const { checkStoryExists, saveStory, checkStoryItemExists, saveStoryItem, DB_COUNT, getStoryItemByPage, DB_COUNT_CATEGORY, getStoryItemByPageCategory, DB_COUNT_TAGS, getStoryItemByPageTag, getStoryItemByAuthor, getStoryItemByDate, randomLatestStories, deleteStoryDetail, getStoryItemByDateCOUNT, deleteVideoDetail, getStoryItems_forApp } = require('./db_query/story_detailsQuery')
 
@@ -233,156 +234,6 @@ setTimeout(() => {
     // deleteVideoDetail() // remove storyDetail documents that is not scrapped properly 
 }, 10000);
 
-const scrape = async (url,story) => {
-
-    var Title = ''
-    var author = {}
-    var date = ''
-    var completeDate = null
-    var views = ''
-    var description = []
-    var audiolink = ''
-    var storiesLink_insideParagrapgh = []
-    var relatedStoriesLinks = []
-    var category = {}
-    var tagsArray = []
-
-
-    const response = await axios.get(url)
-    const body = await response.data;
-    const $ = cheerio.load(body)
-
-
-
-
-
-    $('.entry-title').each((i, el) => {
-
-        const data = $(el).text()
-        Title = data
-
-    })
-    //Author name and link
-
-    $('.author-name').each((i, el) => {
-        const authorName = $(el).text()
-
-        $('.url.fn.n').each((i, el) => {
-            const authorHref = $(el).attr('href')
-            author = { name: authorName, href: authorHref }
-        })
-
-    })
-
-
-
-
-
-
-    $('.posted-on time').each((i, el) => {
-
-        const data = $(el).text()
-        date = data
-        const year = data.substring(6, data.length)
-        const month = data.substring(3, 5)
-        const day = data.substring(0, 2)
-        completeDate = parseInt(year + month + day)
-
-
-    })
-
-
-    $('.post-views-eye').each((i, el) => {
-
-        const data = $(el).text()
-        views = data
-    })
-
-    $('.entry-content p').each((i, el) => {
-        const data = $(el).text()
-        description.push(data)
-
-    })
-
-    $('.entry-content p a').each((i, el) => {
-        const href = $(el).attr('href')
-        const data = $(el).text()
-        if (!data.includes('protected'))
-            storiesLink_insideParagrapgh.push({
-                title: data,
-                href: href
-            })
-    })
-
-    $('.prev a').each((i, el) => {
-        const href = $(el).attr('href')
-        const data = $(el).text()
-        if (!data.includes('protected'))
-            storiesLink_insideParagrapgh.push({
-                title: data,
-                href: href
-            })
-    })
-    $('.next a').each((i, el) => {
-        const href = $(el).attr('href')
-        const data = $(el).text()
-        if (!data.includes('protected'))
-            storiesLink_insideParagrapgh.push({
-                title: data,
-                href: href
-            })
-    })
-    $('.cat-links a').each((i, el) => {
-        const href = $(el).attr('href')
-        const data = $(el).text()
-        if (!data.includes('protected'))
-            category = {
-                title: data,
-                href: href
-            }
-    })
-    $('ol li a').each((i, el) => {
-        const href = $(el).attr('href')
-        const data = $(el).text()
-        relatedStoriesLinks.push({
-            title: data,
-            href: href
-        })
-    })
-
-    $('.tags-links').each((i, el) => {
-
-        const select = cheerio.load(el)
-        select('a').each((i, el) => {
-            const data = $(el).text()
-            tagsArray.push(data)
-        })
-
-    })
-
-    $('.wp-audio-shortcode source').each((i, el) => {
-        const data = $(el).attr('src')
-        audiolink = data
-
-    })
-
-
-    return story_details = {
-        Title: Title,
-        href: story,
-        author: author,
-        date: date,
-        completeDate: completeDate,
-        views: views,
-        description: description,
-        audiolink: audiolink != null ? audiolink : '',
-        storiesLink_insideParagrapgh: storiesLink_insideParagrapgh,
-        category: category,
-        tagsArray: tagsArray,
-        relatedStoriesLinks: relatedStoriesLinks
-    }
-
-}
 
 
 app.post('/story_detailsAPI', async (req, res) => {
@@ -398,7 +249,7 @@ app.post('/story_detailsAPI', async (req, res) => {
 
         story_details = await checkStoryExists(story)
         if (story_details == null) {
-            story_details = await scrape(`https://www.freesexkahani.com/${story_Category}/${story}/`,story)
+            story_details = await freeSexkahaniStory_details(`https://www.freesexkahani.com/${story_Category}/${story}/`,story)
             await saveStory(story_details)
         }
     } catch (error) {
@@ -893,7 +744,7 @@ app.post('/storiesDetailsByTitle', async (req, res) => {
 
         let newStoryDetails = await checkStoryExists(story_href)
         if (newStoryDetails == null) {
-            newStoryDetails = await scrape(`https://www.freesexkahani.com/${category}/${story_href}/`,story_href)
+            newStoryDetails = await freeSexkahaniStory_details(`https://www.freesexkahani.com/${category}/${story_href}/`,story_href)
             await saveStory(newStoryDetails)
         } 
         return res.status(200).json({ success: true, data: newStoryDetails, message: Title })
