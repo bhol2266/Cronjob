@@ -898,7 +898,7 @@ app.post('/storiesDetailsByTitle', async (req, res) => {
             return res.status(200).json({ success: true, data: newStoryDetails, message: Title })
 
         } else {
-            return res.status(200).json({ success: false,  message: Title })
+            return res.status(200).json({ success: true, data: newStoryDetails, message: Title })
 
         }
     } else {
