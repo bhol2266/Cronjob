@@ -891,7 +891,7 @@ app.post('/storiesDetailsByTitle', async (req, res) => {
         const story_href = rough.substring(rough.indexOf('/') + 1, rough.length)
 
 
-        let newStoryDetails = await checkStoryExists(story)
+        let newStoryDetails = await checkStoryExists(story_href)
         if (newStoryDetails == null) {
             newStoryDetails = await scrape(`https://www.freesexkahani.com/${category}/${story_href}/`)
             await saveStory(newStoryDetails)
