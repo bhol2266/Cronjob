@@ -8,6 +8,7 @@ exports.checkStoryExists = async function (href) {
 
 }
 
+
 exports.saveStory = async function (data) {
     const story = new StoryModel(data)
     await story.save()

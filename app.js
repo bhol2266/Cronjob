@@ -296,7 +296,7 @@ app.post('/story_detailsAPI', async (req, res) => {
             const month = data.substring(3, 5)
             const day = data.substring(0, 2)
             completeDate = parseInt(year + month + day)
-      
+
 
         })
 
@@ -406,8 +406,6 @@ app.post('/story_detailsAPI', async (req, res) => {
         return res.status(200).json({ success: false, message: error })
 
     }
-
-
 
     return res.status(200).json({ success: true, data: story_details })
 })
@@ -878,6 +876,33 @@ app.post('/storiesDetails', async (req, res) => {
     const { href } = req.body
     const story_details = await checkStoryExists(href)
     return res.status(200).json({ success: true, data: story_details, message: href })
+
+})
+app.post('/storiesDetailsByTitle', async (req, res) => {
+
+    const { Title } = req.body
+    const story_details = await checkStoryItemExists(Title)
+    if (story_details == null) {
+        const { href } = story_details
+
+        const rough = href.substring(href.indexOf('.com/') + 5, href.length - 1)
+        const category = rough.substring(0, rough.indexOf('/'))
+        const story_href = rough.substring(rough.indexOf('/') + 1, rough.length)
+
+
+        let newStoryDetails = await checkStoryExists(story)
+        if (newStoryDetails == null) {
+            newStoryDetails = await scrape(`https://www.freesexkahani.com/${category}/${story_href}/`)
+            await saveStory(newStoryDetails)
+            return res.status(200).json({ success: true, data: newStoryDetails, message: Title })
+
+        } else {
+            return res.status(200).json({ success: false,  message: Title })
+
+        }
+    } else {
+        return res.status(200).json({ success: false,  message: Title })
+    }
 
 })
 
