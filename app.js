@@ -881,7 +881,7 @@ app.post('/storiesDetails', async (req, res) => {
 app.post('/storiesDetailsByTitle', async (req, res) => {
 
     const { Title } = req.body
-    console.log("Title",Title);
+    console.log("Title", Title);
     const story_details = await checkStoryItemExists(Title)
     if (story_details !== null) {
         const { href } = story_details
@@ -895,14 +895,11 @@ app.post('/storiesDetailsByTitle', async (req, res) => {
         if (newStoryDetails == null) {
             newStoryDetails = await scrape(`https://www.freesexkahani.com/${category}/${story_href}/`)
             await saveStory(newStoryDetails)
-            return res.status(200).json({ success: true, data: newStoryDetails, message: Title })
+        } 
+        return res.status(200).json({ success: true, data: newStoryDetails, message: Title })
 
-        } else {
-            return res.status(200).json({ success: true, data: newStoryDetails, message: Title })
-
-        }
     } else {
-        return res.status(200).json({ success: false,  message: Title })
+        return res.status(200).json({ success: false, message: Title })
     }
 
 })
