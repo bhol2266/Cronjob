@@ -233,7 +233,7 @@ setTimeout(() => {
     // deleteVideoDetail() // remove storyDetail documents that is not scrapped properly 
 }, 10000);
 
-const scrape = async (url) => {
+const scrape = async (url,story) => {
 
     var Title = ''
     var author = {}
@@ -398,7 +398,7 @@ app.post('/story_detailsAPI', async (req, res) => {
 
         story_details = await checkStoryExists(story)
         if (story_details == null) {
-            story_details = await scrape(`https://www.freesexkahani.com/${story_Category}/${story}/`)
+            story_details = await scrape(`https://www.freesexkahani.com/${story_Category}/${story}/`,story)
             await saveStory(story_details)
         }
     } catch (error) {
@@ -893,7 +893,7 @@ app.post('/storiesDetailsByTitle', async (req, res) => {
 
         let newStoryDetails = await checkStoryExists(story_href)
         if (newStoryDetails == null) {
-            newStoryDetails = await scrape(`https://www.freesexkahani.com/${category}/${story_href}/`)
+            newStoryDetails = await scrape(`https://www.freesexkahani.com/${category}/${story_href}/`,story_href)
             await saveStory(newStoryDetails)
         } 
         return res.status(200).json({ success: true, data: newStoryDetails, message: Title })
