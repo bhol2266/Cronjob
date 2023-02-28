@@ -882,7 +882,7 @@ app.post('/storiesDetailsByTitle', async (req, res) => {
 
     const { Title } = req.body
     const story_details = await checkStoryItemExists(Title)
-    if (story_details == null) {
+    if (story_details !== null) {
         const { href } = story_details
 
         const rough = href.substring(href.indexOf('.com/') + 5, href.length - 1)
