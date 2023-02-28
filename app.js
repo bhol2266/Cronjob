@@ -732,7 +732,6 @@ app.post('/storiesDetails', async (req, res) => {
 app.post('/storiesDetailsByTitle', async (req, res) => {
 
     const { Title } = req.body
-    console.log("Title", Title);
     const story_details = await checkStoryItemExists(Title)
     if (story_details !== null) {
         const { href } = story_details
