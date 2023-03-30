@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const fs = require('fs')
 const axios = require('axios');
 const cheerio = require('cheerio');
+const admin = require('firebase-admin');
+const serviceAccount = require('./serviceAccountKey.json');
 const { freeSexkahani } = require('./config/freeSexkahani');
 const { videoPageData } = require('./config/videoPageData');
 const { hotdesipics } = require('./config/hotdesipics');
@@ -28,11 +30,14 @@ const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/
 const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
 const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
 
+
+
 // const schedule = require('node-schedule');
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
 const mongoose = require("mongoose");
+const { LoginCredentials } = require('two-step-auth');
 mongoose.set("strictQuery", false);
 mongoose.connect(
     process.env.MONGODB_URI, {
@@ -189,6 +194,14 @@ try {
 }
 
 
+// Initialize Firebase Admin SDK
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: 'gs://desikahaninextjs-ffab3.appspot.com'
+});
+const bucket = admin.storage().bucket();
+
+
 
 
 
@@ -228,6 +241,7 @@ async function insertPicThumbnail() {
 // insertStoryThumbnail()
 // insertVideoThumbnail()
 // insertPicThumbnail()
+//  insertpicToFirebase()
 
 setTimeout(() => {
     deleteStoryDetail() // remove storyDetail documents that is not scrapped properly 
@@ -242,14 +256,14 @@ app.post('/story_detailsAPI', async (req, res) => {
     let story_details = {}
 
 
-   
+
 
 
     try {
 
         story_details = await checkStoryExists(story)
         if (story_details == null) {
-            story_details = await freeSexkahaniStory_details(`https://www.freesexkahani.com/${story_Category}/${story}/`,story)
+            story_details = await freeSexkahaniStory_details(`https://www.freesexkahani.com/${story_Category}/${story}/`, story)
             await saveStory(story_details)
         }
     } catch (error) {
@@ -604,6 +618,43 @@ app.post('/HomepagePics', async (req, res) => {
 
         finalDataArray_final = await getPicItemByPage(page)
 
+        //upload thumnail to firebase storage
+        finalDataArray_final.forEach(async(obj)=>{
+
+            const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
+            const [exists] = await file.exists();
+            if (exists) {
+                return
+            } else {
+                axios.get(obj.thumbnail, { responseType: 'arraybuffer' })
+                    .then(response => {
+                        // Upload the image to Firebase Storage
+                        const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
+                        const buffer = Buffer.from(response.data, 'binary');
+                        const stream = file.createWriteStream({
+                            metadata: {
+                                contentType: 'image/jpeg'
+                            }
+                        });
+                        stream.on('error', err => console.error(err));
+                        stream.on('finish', async () => {
+                            // Get the download URL of the image
+                            const downloadUrl = await file.getSignedUrl({
+                                action: 'read',
+                                expires: '03-09-2491' // Optional expiration date
+                            });
+                            // console.log('Download URL:', downloadUrl);
+                        });
+                        stream.end(buffer);
+                    })
+                    .catch(error =>
+                        console.error("error : " + foldername + "   " + imageUrl)
+                    );
+            }
+
+        })
+       
+
         return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final, pagination_nav_pages: pagination_nav_pages } })
 
     } catch (error) {
@@ -629,6 +680,44 @@ app.post('/fullalbum', async (req, res) => {
             dataobject = await fullalbum(photoAlbum)
             await savePic(dataobject)
         }
+
+
+        const { href, imageArray } = dataobject
+
+        //upload thumnail to firebase storage
+        imageArray.forEach(async (imageUrl, index) => {
+            const file = bucket.file(`picsModel/${href}/${index + 1}.png`);
+            const [exists] = await file.exists();
+            if (exists) {
+                return
+            } else {
+                axios.get(imageUrl, { responseType: 'arraybuffer' })
+                    .then(response => {
+                        // Upload the image to Firebase Storage
+                        const file = bucket.file(`picsModel/${href}/${index + 1}.png`);
+                        const buffer = Buffer.from(response.data, 'binary');
+                        const stream = file.createWriteStream({
+                            metadata: {
+                                contentType: 'image/jpeg'
+                            }
+                        });
+                        stream.on('error', err => console.error(err));
+                        stream.on('finish', async () => {
+                            // Get the download URL of the image
+                            const downloadUrl = await file.getSignedUrl({
+                                action: 'read',
+                                expires: '03-09-2491' // Optional expiration date
+                            });
+                            // console.log('Download URL:', downloadUrl);
+                        });
+                        stream.end(buffer);
+                    })
+                    .catch(error =>
+                        console.error("error : " + foldername + "   " + imageUrl)
+                    );
+            }
+        })
+
 
         finalDataArray_final = await randomPiclist()
 
@@ -743,9 +832,9 @@ app.post('/storiesDetailsByTitle', async (req, res) => {
 
         let newStoryDetails = await checkStoryExists(story_href)
         if (newStoryDetails == null) {
-            newStoryDetails = await freeSexkahaniStory_details(`https://www.freesexkahani.com/${category}/${story_href}/`,story_href)
+            newStoryDetails = await freeSexkahaniStory_details(`https://www.freesexkahani.com/${category}/${story_href}/`, story_href)
             await saveStory(newStoryDetails)
-        } 
+        }
         return res.status(200).json({ success: true, data: newStoryDetails, message: Title })
 
     } else {

@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 
 const PicDetailSchema = new mongoose.Schema({
 
-    href: { type: String },
+    href: { type: String, unique: true },
     imageArray: [{ type: String }],
 
-}, {  timestamps: true })
+}, { timestamps: true })
 
-mongoose.models={}
+mongoose.models = {}
 module.exports = mongoose.model('PicModel', PicDetailSchema)
 
