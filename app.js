@@ -721,6 +721,39 @@ app.post('/fullalbum', async (req, res) => {
 
         finalDataArray_final = await randomPiclist()
 
+        finalDataArray_final.forEach(async (obj, index) => {
+            const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
+            const [exists] = await file.exists();
+            if (exists) {
+                return
+            } else {
+                axios.get(obj.thumbnail, { responseType: 'arraybuffer' })
+                    .then(response => {
+                        // Upload the image to Firebase Storage
+                        const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
+                        const buffer = Buffer.from(response.data, 'binary');
+                        const stream = file.createWriteStream({
+                            metadata: {
+                                contentType: 'image/jpeg'
+                            }
+                        });
+                        stream.on('error', err => console.error(err));
+                        stream.on('finish', async () => {
+                            // Get the download URL of the image
+                            const downloadUrl = await file.getSignedUrl({
+                                action: 'read',
+                                expires: '03-09-2491' // Optional expiration date
+                            });
+                            // console.log('Download URL:', downloadUrl);
+                        });
+                        stream.end(buffer);
+                    })
+                    .catch(error =>
+                        console.error("error : " + foldername + "   " + imageUrl)
+                    );
+            }
+        })
+
     } catch (error) {
         console.log(error);
         return res.status(200).json({ success: false, message: error })
