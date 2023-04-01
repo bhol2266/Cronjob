@@ -648,7 +648,7 @@ app.post('/HomepagePics', async (req, res) => {
                         stream.end(buffer);
                     })
                     .catch(error =>
-                        console.error("error : " + foldername + "   " + imageUrl)
+                        console.error("HomepagePics : " + error)
                     );
             }
 
@@ -713,7 +713,7 @@ app.post('/fullalbum', async (req, res) => {
                         stream.end(buffer);
                     })
                     .catch(error =>
-                        console.error("error : " + foldername + "   " + imageUrl)
+                        console.error("imageArray : " + error)
                     );
             }
         })
@@ -749,7 +749,7 @@ app.post('/fullalbum', async (req, res) => {
                         stream.end(buffer);
                     })
                     .catch(error =>
-                        console.error("error : " + foldername + "   " + imageUrl)
+                        console.error("finalDataArray_final : " + error)
                     );
             }
         })
