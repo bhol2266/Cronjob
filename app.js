@@ -204,6 +204,7 @@ try {
     }, {
         timezone: 'Asia/Kolkata' // Set the timezone to Indian Standard Time
     });
+    
     cron.schedule('0 11 * * *', () => {
         // Desi Kahaniya apps Notification
         // Running task every day at 11 AM Indian time    
