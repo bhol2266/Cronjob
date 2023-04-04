@@ -1,13 +1,12 @@
 const express = require('express')
 const app = express()
+const { admin_Adult_DK } = require("./firebase.js")
 const cron = require("node-cron");
 const port = process.env.PORT || 5000;
 const bodyParser = require("body-parser");
 const fs = require('fs')
 const axios = require('axios');
 const cheerio = require('cheerio');
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
 const { freeSexkahani } = require('./config/freeSexkahani');
 const { videoPageData } = require('./config/videoPageData');
 const { hotdesipics } = require('./config/hotdesipics');
@@ -26,6 +25,11 @@ const { checkPicItemExists, savePicItem, PICITEMS_DB_COUNT, getPicItemByPage, ch
 const tagJSON = require('./JsonData/TagsDetail.json')
 
 const { freeSexkahaniVideo } = require("./config/freeSexkahaniVideo")
+
+const { Adult_desi_kahaniya_Notification } = require('./Adult Desi Kahaniya/Adult_desi_kahaniya_Notification')
+const { Hindi_desi_kahaniya_Notification } = require('./Hindi Desi Kahaniya/Hindi_desi_kahaniya_Notification')
+
+
 const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
 const desiKahani_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7'
 const chutlundscom_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV'
@@ -189,17 +193,34 @@ try {
         axios.get(chutlundscom_DeployHook).catch(error => console.log(error))
 
     });
+
+
+    cron.schedule('0 22 * * *', () => {
+        // Desi Kahaniya apps Notification
+        // Running task every day at 10 PM Indian time    
+        Adult_desi_kahaniya_Notification()
+        Hindi_desi_kahaniya_Notification()
+
+    }, {
+        timezone: 'Asia/Kolkata' // Set the timezone to Indian Standard Time
+    });
+    cron.schedule('0 11 * * *', () => {
+        // Desi Kahaniya apps Notification
+        // Running task every day at 11 AM Indian time    
+        Adult_desi_kahaniya_Notification()
+        Hindi_desi_kahaniya_Notification()
+
+    }, {
+        timezone: 'Asia/Kolkata' // Set the timezone to Indian Standard Time
+    });
+
 } catch (error) {
 
 }
 
 
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'gs://desikahaninextjs-ffab3.appspot.com'
-});
-const bucket = admin.storage().bucket();
+const bucket = admin_Adult_DK.storage().bucket();
+
 
 
 
@@ -244,9 +265,10 @@ async function insertPicThumbnail() {
 //  insertpicToFirebase()
 
 setTimeout(() => {
-    deleteStoryDetail() // remove storyDetail documents that is not scrapped properly 
     // deleteVideoDetail() // remove storyDetail documents that is not scrapped properly 
-}, 10000);
+    Hindi_desi_kahaniya_Notification()
+
+}, 5000);
 
 
 
@@ -619,7 +641,7 @@ app.post('/HomepagePics', async (req, res) => {
         finalDataArray_final = await getPicItemByPage(page)
 
         //upload thumnail to firebase storage
-        finalDataArray_final.forEach(async(obj)=>{
+        finalDataArray_final.forEach(async (obj) => {
 
             const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
             const [exists] = await file.exists();
@@ -653,7 +675,7 @@ app.post('/HomepagePics', async (req, res) => {
             }
 
         })
-       
+
 
         return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final, pagination_nav_pages: pagination_nav_pages } })
 

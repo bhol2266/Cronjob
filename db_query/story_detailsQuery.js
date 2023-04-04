@@ -103,6 +103,16 @@ exports.getStoryItems_forApp = async function (completeDate) {
     return storyItemsArray
 }
 
+exports.singleRandomStoryForNotification = async function () {
+
+    const items = await StoryModel.aggregate([
+        { $match: {  } }, // filter the results
+        { $sample: { size: 1 } } // You want to get 5 docs
+    ]);
+
+    return items
+}
+
 
 
 

@@ -1,21 +1,24 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+const admin = require('firebase-admin');
+const serviceAccount_AudltDesiKahani = require('./Adult Desi Kahaniya/serviceAccountKey.json')
+const serviceAccount_HindiDesiKahani = require('./Hindi Desi Kahaniya/serviceAccountKey.json')
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDc1yxzAlopYX5DiIdAGn7O-EeZWVSvB_4",
-  authDomain: "desikahaninextjs.firebaseapp.com",
-  projectId: "desikahaninextjs",
-  storageBucket: "desikahaninextjs.appspot.com",
-  messagingSenderId: "375623154497",
-  appId: "1:375623154497:web:2476b41a06b0289dc9bfc0",
-  measurementId: "G-17LJCPD4MW"
+
+
+const config1 = {
+    credential: admin.credential.cert(serviceAccount_AudltDesiKahani),
+    databaseURL: 'https://desikahani-c7af3-default-rtdb.asia-southeast1.firebasedatabase.app/',
+    storageBucket: 'gs://desikahaninextjs-ffab3.appspot.com'
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const config2 = {
+    credential: admin.credential.cert(serviceAccount_HindiDesiKahani),
+    databaseURL: 'https://hindi-desi-kahani-2-default-rtdb.asia-southeast1.firebasedatabase.app/',
+};
+
+const admin_Adult_DK = admin.initializeApp(config1, 'admin_Adult_DK');
+const admin_Hindi_DK = admin.initializeApp(config2, 'admin_Hindi_DK');
+
+module.exports = {
+    admin_Adult_DK,
+    admin_Hindi_DK
+  };
