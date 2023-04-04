@@ -9,7 +9,7 @@ const messaging = admin_Adult_DK.messaging();
 
 
 exports.Adult_desi_kahaniya_Notification = async () => {
-  const imageUrl = "https://hotdesipics.co/wp-content/uploads/2023/04/Tharki-Desi-High-School-Girl-Ki-Mast-Badan.jpg";
+  const imageUrl = "https://hotdesipics.co/wp-content/uploads/2023/03/Ameer-Ladki-Aur-Gareeb-Boy-Ka-Affair-_009-150x300.jpg";
   let finalDataArray = await singleRandomStoryForNotification()
   let obj = finalDataArray[0];
   const db = admin_Adult_DK.database();
