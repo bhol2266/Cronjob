@@ -3,6 +3,8 @@ const serviceAccount_AudltDesiKahani = require('./Adult Desi Kahaniya/serviceAcc
 const serviceAccount_HindiDesiKahani = require('./Hindi Desi Kahaniya/serviceAccountKey.json')
 
 
+//multiple firebase account initialize
+
 
 const config1 = {
     credential: admin.credential.cert(serviceAccount_AudltDesiKahani),

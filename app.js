@@ -266,8 +266,6 @@ async function insertPicThumbnail() {
 
 setTimeout(() => {
     // deleteVideoDetail() // remove storyDetail documents that is not scrapped properly 
-    Hindi_desi_kahaniya_Notification()
-
 }, 5000);
 
 
