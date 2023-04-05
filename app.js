@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const { admin_Adult_DK } = require("./firebase.js")
+const { admin_DesiKahaniNextjs } = require("./firebase.js")
 const cron = require("node-cron");
 const port = process.env.PORT || 5000;
 const bodyParser = require("body-parser");
@@ -220,7 +220,7 @@ try {
 }
 
 
-const bucket = admin_Adult_DK.storage().bucket();
+const bucket = admin_DesiKahaniNextjs.storage().bucket();
 
 
 
