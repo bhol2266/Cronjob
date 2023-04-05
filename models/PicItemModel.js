@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const PicItemSchema = new mongoose.Schema({
 
-    Title: { type: String },
+    Title: { type: String, unique: true },
     thumbnail: { type: String },
     date: { day: { type: String }, month: { type: String }, year: { type: String }, },
     completeDate: { type: Number },
