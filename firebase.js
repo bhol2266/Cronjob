@@ -2,6 +2,7 @@ const admin = require('firebase-admin');
 const serviceAccount_AudltDesiKahani = require('./Adult Desi Kahaniya/serviceAccountKey.json')
 const serviceAccount_HindiDesiKahani = require('./Hindi Desi Kahaniya/serviceAccountKey.json')
 const serviceAccount_DesiKahaniNextjs = require('./serviceAccountKey.json')
+const serviceAccount_DesiKahaniOlds = require('./Desi Kahani Old/serviceAccountKey.json')
 
 //multiple firebase account initialize
 
@@ -21,12 +22,20 @@ const desiKahaniNextjs = {
 
 };
 
+const desiKahaniOld = {
+    credential: admin.credential.cert(serviceAccount_DesiKahaniOlds),
+    databaseURL: 'https://hot-hindi-story-default-rtdb.firebaseio.com/',
+
+};
+
 const admin_Adult_DK = admin.initializeApp(desikahaniAdult, 'admin_Adult_DK');
 const admin_Hindi_DK = admin.initializeApp(hindi_desi_kahani, 'admin_Hindi_DK');
 const admin_DesiKahaniNextjs = admin.initializeApp(desiKahaniNextjs, 'admin_DesiKahaniNextjs');
+const admin_DesiKahaniOld = admin.initializeApp(desiKahaniOld, 'admin_DesiKahaniOld');
 
 module.exports = {
     admin_Adult_DK,
     admin_Hindi_DK,
-    admin_DesiKahaniNextjs
+    admin_DesiKahaniNextjs,
+    admin_DesiKahaniOld
 };

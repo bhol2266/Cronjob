@@ -28,6 +28,7 @@ const { freeSexkahaniVideo } = require("./config/freeSexkahaniVideo")
 
 const { Adult_desi_kahaniya_Notification } = require('./Adult Desi Kahaniya/Adult_desi_kahaniya_Notification')
 const { Hindi_desi_kahaniya_Notification } = require('./Hindi Desi Kahaniya/Hindi_desi_kahaniya_Notification')
+const { desiKahani_Old_Notification } = require('./Desi Kahani Old/DesiKahani_Old_Notification.js')
 
 
 const chutlundslive_DeployHook = 'https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2'
@@ -200,6 +201,8 @@ try {
         // Running task every day at 10 PM Indian time    
         Adult_desi_kahaniya_Notification()
         Hindi_desi_kahaniya_Notification()
+        desiKahani_Old_Notification()
+
 
     }, {
         timezone: 'Asia/Kolkata' // Set the timezone to Indian Standard Time
@@ -210,6 +213,7 @@ try {
         // Running task every day at 11 AM Indian time    
         Adult_desi_kahaniya_Notification()
         Hindi_desi_kahaniya_Notification()
+        desiKahani_Old_Notification()
 
     }, {
         timezone: 'Asia/Kolkata' // Set the timezone to Indian Standard Time

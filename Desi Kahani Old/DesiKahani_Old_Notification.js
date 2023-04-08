@@ -1,19 +1,19 @@
-const { admin_Hindi_DK } = require("../firebase.js")
+const { admin_DesiKahaniOld } = require("../firebase.js")
 
 
 
-const { singleRandomStoryForNotification } = require('../db_query/story_detailsQuery')
+const { singleRandomStoryForNotification } = require('../db_query/story_detailsQuery.js')
 
 
 // Get a reference to the FCM messaging service
-const messaging = admin_Hindi_DK.messaging();
+const messaging = admin_DesiKahaniOld.messaging();
 
 
-exports.Hindi_desi_kahaniya_Notification = async () => {
+exports.desiKahani_Old_Notification = async () => {
 
-  const db = admin_Hindi_DK.database();
+  const db = admin_DesiKahaniOld.database();
 
-  const sendNotificationRef = db.ref('Hindi_desi_Kahani-2/Send_Notification');
+  const sendNotificationRef = db.ref('shareapp_url/Send_Notification');
   sendNotificationRef.once('value', async (snapshot) => {
     const sendNotification = snapshot.val();
 
@@ -62,7 +62,7 @@ exports.Hindi_desi_kahaniya_Notification = async () => {
           // Send the notification to all devices
           messaging.sendToTopic('/topics/all', payload)
             .then((response) => {
-              console.log('Successfully sent notification: Hindi Desi Kahani', response);
+              console.log('Successfully sent notification: Desi Kahani Old', response);
             })
             .catch((error) => {
               console.error('Error sending notification:', error);
