@@ -206,14 +206,23 @@ try {
     }, {
         timezone: 'Asia/Kolkata' // Set the timezone to Indian Standard Time
     });
-    
-    cron.schedule('0 11 * * *', () => {
+
+    cron.schedule('0 17 * * *', () => {
         // Desi Kahaniya apps Notification
-        // Running task every day at 11 AM Indian time    
+        // Running task every day at 5 PM Indian time    
         Adult_desi_kahaniya_Notification()
         Hindi_desi_kahaniya_Notification()
         desiKahani_Old_Notification()
-
+    }, {
+        timezone: 'Asia/Kolkata' // Set the timezone to Indian Standard Time
+    });
+    
+    cron.schedule('0 10 * * *', () => {
+        // Desi Kahaniya apps Notification
+        // Running task every day at 10 AM Indian time    
+        Adult_desi_kahaniya_Notification()
+        Hindi_desi_kahaniya_Notification()
+        desiKahani_Old_Notification()
     }, {
         timezone: 'Asia/Kolkata' // Set the timezone to Indian Standard Time
     });
