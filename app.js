@@ -633,15 +633,15 @@ app.post('/HomepagePics', async (req, res) => {
     let finalDataArray_final = []
     pagination_nav_pages.push(page)
     try {
-        if (page === "1") {
-            const finalDataArray = await hotdesipics(`https://hotdesipics.co/main/page/${page}/`)
-            finalDataArray.forEach(async (item) => {
-                let obj = await checkPicItemExists(item.fullalbum_href)
-                if (obj == null) {
-                    await savePicItem(item)
-                }
-            })
-        }
+        // if (page === "1") {
+        //     const finalDataArray = await hotdesipics(`https://hotdesipics.co/main/page/${page}/`)
+        //     finalDataArray.forEach(async (item) => {
+        //         let obj = await checkPicItemExists(item.fullalbum_href)
+        //         if (obj == null) {
+        //             await savePicItem(item)
+        //         }
+        //     })
+        // }
 
         let count = await PICITEMS_DB_COUNT()
 
