@@ -216,7 +216,7 @@ try {
     }, {
         timezone: 'Asia/Kolkata' // Set the timezone to Indian Standard Time
     });
-    
+
     cron.schedule('0 10 * * *', () => {
         // Desi Kahaniya apps Notification
         // Running task every day at 10 AM Indian time    
@@ -648,47 +648,40 @@ app.post('/HomepagePics', async (req, res) => {
         let lastPage = Math.round(count / 12)
         pagination_nav_pages.push(lastPage.toString())
 
+        const randomPage = Math.floor(Math.random() * lastPage) + 1;
 
-        finalDataArray_final = await getPicItemByPage(page)
+        finalDataArray_final = await getPicItemByPage(randomPage.toString())
 
-        //upload thumnail to firebase storage
-        finalDataArray_final.forEach(async (obj) => {
+        let dataArray = []
+        //get thumnailUrl and insert it inside dataArray 
+        finalDataArray_final.forEach(async (obj, index) => {
+            const file = await bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
 
-            const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
-            const [exists] = await file.exists();
-            if (exists) {
-                return
-            } else {
-                axios.get(obj.thumbnail, { responseType: 'arraybuffer' })
-                    .then(response => {
-                        // Upload the image to Firebase Storage
-                        const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
-                        const buffer = Buffer.from(response.data, 'binary');
-                        const stream = file.createWriteStream({
-                            metadata: {
-                                contentType: 'image/jpeg'
-                            }
-                        });
-                        stream.on('error', err => console.error(err));
-                        stream.on('finish', async () => {
-                            // Get the download URL of the image
-                            const downloadUrl = await file.getSignedUrl({
-                                action: 'read',
-                                expires: '03-09-2491' // Optional expiration date
-                            });
-                            // console.log('Download URL:', downloadUrl);
-                        });
-                        stream.end(buffer);
-                    })
-                    .catch(error =>
-                        console.error("HomepagePics : " + error)
-                    );
+            const currentDate = new Date();
+            const after15days = new Date(currentDate);
+            after15days.setDate(currentDate.getDate() + 15);
+            // Get the year, month, and day components of the date
+            const year = after15days.getFullYear();
+            const month = String(after15days.getMonth() + 1).padStart(2, '0');
+            const day = String(after15days.getDate()).padStart(2, '0');
+
+            const signedURL = await file.getSignedUrl({
+                action: 'read',
+                expires: `${month}-${day}-${year}` // Optional expiration date, in the format "MM-DD-YYYY"
+            })
+            const thumbnailURL = await signedURL[0];
+
+            let newObj = obj
+            obj['thumbnail'] = thumbnailURL;
+            dataArray.push(newObj)
+
+
+            if (index === finalDataArray_final.length - 1) {
+                return res.status(200).json({ success: true, data: { count: count, finalDataArray: dataArray, pagination_nav_pages: pagination_nav_pages } })
             }
-
         })
 
 
-        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final, pagination_nav_pages: pagination_nav_pages } })
 
     } catch (error) {
         console.log(error);
@@ -698,6 +691,78 @@ app.post('/HomepagePics', async (req, res) => {
 
 
 })
+
+
+async function updateDB() {
+
+    const PicModel = require('./models/PicModel') //homepage story item
+    const PicExist = await PicModel.find()
+
+    PicExist.forEach(async (obj, index) => {
+
+        const { href, imageArray } = obj
+        let newimageArray = []
+        if (imageArray.length > 0 && imageArray[0].includes("https://storage.googleapis")) {
+            return
+        }
+
+        const file = bucket.file(`picsModel/${href}/1.png`);
+        const [exists] = await file.exists();
+
+
+        if (!exists) {
+            console.log(href);
+            await PicModel.deleteOne({ href: href }, (err, result) => {
+                if (err) {
+                    console.error(`Failed to delete document: ${err}`);
+                    return;
+                }
+                console.log(`Deleted ${result.deletedCount} document`);
+            });
+        }
+
+        return
+
+        const folderPath = `picsModel/${href}`;
+        const fileExtension = '.png';
+
+        bucket.getFiles({ prefix: folderPath }).then((data) => {
+            const files = data[0];
+
+            const imageFiles = files.filter((file) => {
+                return file.name.endsWith(fileExtension);
+            });
+
+
+            // Loop through all image files in the folder
+            imageFiles.forEach(async (file, index) => {
+                try {
+                    // Get the download URL for the image file
+                    const url = await file.getSignedUrl({
+                        action: 'read',
+                        expires: '03-17-2025' // Set the expiration date of the URL
+                    });
+
+                    newimageArray.push(url[0])
+
+                    if (index === files.length - 1) {
+                        console.log(href);
+                        await PicModel.updateOne({ href: href }, { $set: { imageArray: newimageArray } })
+                    }
+                } catch (err) {
+                    console.error(`Error getting download URL for ${file.name}: ${err}`);
+                }
+            });
+        }).catch((err) => {
+            console.error(`Error listing files in ${folderPath}: ${err}`);
+        });
+
+
+    })
+}
+
+// updateDB();
+
 
 app.post('/fullalbum', async (req, res) => {
 
@@ -709,83 +774,7 @@ app.post('/fullalbum', async (req, res) => {
     try {
 
         dataobject = await checkPicExists(photoAlbum)
-        if (dataobject == null) {
-            dataobject = await fullalbum(photoAlbum)
-            await savePic(dataobject)
-        }
-
-
-        const { href, imageArray } = dataobject
-
-        //upload thumnail to firebase storage
-        imageArray.forEach(async (imageUrl, index) => {
-            const file = bucket.file(`picsModel/${href}/${index + 1}.png`);
-            const [exists] = await file.exists();
-            if (exists) {
-                return
-            } else {
-                axios.get(imageUrl, { responseType: 'arraybuffer' })
-                    .then(response => {
-                        // Upload the image to Firebase Storage
-                        const file = bucket.file(`picsModel/${href}/${index + 1}.png`);
-                        const buffer = Buffer.from(response.data, 'binary');
-                        const stream = file.createWriteStream({
-                            metadata: {
-                                contentType: 'image/jpeg'
-                            }
-                        });
-                        stream.on('error', err => console.error(err));
-                        stream.on('finish', async () => {
-                            // Get the download URL of the image
-                            const downloadUrl = await file.getSignedUrl({
-                                action: 'read',
-                                expires: '03-09-2491' // Optional expiration date
-                            });
-                            // console.log('Download URL:', downloadUrl);
-                        });
-                        stream.end(buffer);
-                    })
-                    .catch(error =>
-                        console.error("imageArray : " + error)
-                    );
-            }
-        })
-
-
         finalDataArray_final = await randomPiclist()
-
-        finalDataArray_final.forEach(async (obj, index) => {
-            const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
-            const [exists] = await file.exists();
-            if (exists) {
-                return
-            } else {
-                axios.get(obj.thumbnail, { responseType: 'arraybuffer' })
-                    .then(response => {
-                        // Upload the image to Firebase Storage
-                        const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
-                        const buffer = Buffer.from(response.data, 'binary');
-                        const stream = file.createWriteStream({
-                            metadata: {
-                                contentType: 'image/jpeg'
-                            }
-                        });
-                        stream.on('error', err => console.error(err));
-                        stream.on('finish', async () => {
-                            // Get the download URL of the image
-                            const downloadUrl = await file.getSignedUrl({
-                                action: 'read',
-                                expires: '03-09-2491' // Optional expiration date
-                            });
-                            // console.log('Download URL:', downloadUrl);
-                        });
-                        stream.end(buffer);
-                    })
-                    .catch(error =>
-                        console.error("finalDataArray_final : " + error)
-                    );
-            }
-        })
 
     } catch (error) {
         console.log(error);
@@ -793,9 +782,13 @@ app.post('/fullalbum', async (req, res) => {
 
     }
 
-
-    return res.status(200).json({ success: true, dataobject: dataobject, finalDataArray: finalDataArray_final })
+    if (dataobject == null) {
+        return res.status(200).json({ success: false, message: "server error" })
+    } else {
+        return res.status(200).json({ success: true, dataobject: dataobject, finalDataArray: finalDataArray_final })
+    }
 })
+
 
 
 
