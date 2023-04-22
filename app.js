@@ -652,34 +652,7 @@ app.post('/HomepagePics', async (req, res) => {
 
         finalDataArray_final = await getPicItemByPage(randomPage.toString())
 
-        let dataArray = []
-        //get thumnailUrl and insert it inside dataArray 
-        finalDataArray_final.forEach(async (obj, index) => {
-            const file = await bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
-
-            const currentDate = new Date();
-            const after15days = new Date(currentDate);
-            after15days.setDate(currentDate.getDate() + 15);
-            // Get the year, month, and day components of the date
-            const year = after15days.getFullYear();
-            const month = String(after15days.getMonth() + 1).padStart(2, '0');
-            const day = String(after15days.getDate()).padStart(2, '0');
-
-            const signedURL = await file.getSignedUrl({
-                action: 'read',
-                expires: `${month}-${day}-${year}` // Optional expiration date, in the format "MM-DD-YYYY"
-            })
-            const thumbnailURL = await signedURL[0];
-
-            let newObj = obj
-            obj['thumbnail'] = thumbnailURL;
-            dataArray.push(newObj)
-
-
-            if (index === finalDataArray_final.length - 1) {
-                return res.status(200).json({ success: true, data: { count: count, finalDataArray: dataArray, pagination_nav_pages: pagination_nav_pages } })
-            }
-        })
+        return res.status(200).json({ success: true, data: { count: count, finalDataArray: finalDataArray_final, pagination_nav_pages: pagination_nav_pages } })
 
 
 
@@ -695,66 +668,41 @@ app.post('/HomepagePics', async (req, res) => {
 
 async function updateDB() {
 
-    const PicModel = require('./models/PicModel') //homepage story item
+    const PicModel = require('./models/PicItemModel.js') //homepage story item
     const PicExist = await PicModel.find()
 
     PicExist.forEach(async (obj, index) => {
 
-        const { href, imageArray } = obj
-        let newimageArray = []
-        if (imageArray.length > 0 && imageArray[0].includes("https://storage.googleapis")) {
+        const { thumbnail, fullalbum_href } = obj
+
+        if (thumbnail.includes("https://storage.googleapis")) {
             return
         }
 
-        const file = bucket.file(`picsModel/${href}/1.png`);
+        const file = bucket.file(`picsItemModel/${obj.fullalbum_href}/thumbnail.png`);
         const [exists] = await file.exists();
-
-
         if (!exists) {
-            console.log(href);
-            await PicModel.deleteOne({ href: href }, (err, result) => {
-                if (err) {
-                    console.error(`Failed to delete document: ${err}`);
-                    return;
-                }
-                console.log(`Deleted ${result.deletedCount} document`);
-            });
+            console.log(fullalbum_href);
+
+            return
         }
 
-        return
-
-        const folderPath = `picsModel/${href}`;
-        const fileExtension = '.png';
-
-        bucket.getFiles({ prefix: folderPath }).then((data) => {
-            const files = data[0];
-
-            const imageFiles = files.filter((file) => {
-                return file.name.endsWith(fileExtension);
-            });
 
 
-            // Loop through all image files in the folder
-            imageFiles.forEach(async (file, index) => {
-                try {
-                    // Get the download URL for the image file
-                    const url = await file.getSignedUrl({
-                        action: 'read',
-                        expires: '03-17-2025' // Set the expiration date of the URL
-                    });
+        // Get the download URL of the image file
+       await file.getSignedUrl({
+            action: 'read',
+            expires: '03-17-2025'
+        }).then(async (url) => {
+            console.log('Download URL:', url[0]);
 
-                    newimageArray.push(url[0])
-
-                    if (index === files.length - 1) {
-                        console.log(href);
-                        await PicModel.updateOne({ href: href }, { $set: { imageArray: newimageArray } })
-                    }
-                } catch (err) {
-                    console.error(`Error getting download URL for ${file.name}: ${err}`);
+            await PicModel.updateOne({ fullalbum_href: fullalbum_href }, {
+                $set: {
+                    thumbnail: url[0]
                 }
-            });
-        }).catch((err) => {
-            console.error(`Error listing files in ${folderPath}: ${err}`);
+            })
+        }).catch(error => {
+            console.error('Error getting download URL:', error);
         });
 
 
