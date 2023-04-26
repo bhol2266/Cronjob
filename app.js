@@ -199,7 +199,7 @@ try {
     cron.schedule('0 22 * * *', () => {
         // Desi Kahaniya apps Notification
         // Running task every day at 10 PM Indian time    
-        Adult_desi_kahaniya_Notification()
+        // Adult_desi_kahaniya_Notification()
         Hindi_desi_kahaniya_Notification()
         desiKahani_Old_Notification()
 
@@ -210,7 +210,7 @@ try {
     cron.schedule('0 17 * * *', () => {
         // Desi Kahaniya apps Notification
         // Running task every day at 5 PM Indian time    
-        Adult_desi_kahaniya_Notification()
+        // Adult_desi_kahaniya_Notification()
         Hindi_desi_kahaniya_Notification()
         desiKahani_Old_Notification()
     }, {
@@ -220,7 +220,7 @@ try {
     cron.schedule('0 10 * * *', () => {
         // Desi Kahaniya apps Notification
         // Running task every day at 10 AM Indian time    
-        Adult_desi_kahaniya_Notification()
+        // Adult_desi_kahaniya_Notification()
         Hindi_desi_kahaniya_Notification()
         desiKahani_Old_Notification()
     }, {
