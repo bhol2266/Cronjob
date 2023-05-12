@@ -1,29 +1,35 @@
-const { admin_Adult_DK } = require("../firebase.js")
+const { admin_Hindi_DK } = require("../../firebase.js")
 
 
-const { singleRandomStoryForNotification } = require('../db_query/story_detailsQuery')
+
+const { singleRandomStoryForNotification } = require('../../db_query/story_detailsQuery')
 
 
 // Get a reference to the FCM messaging service
-const messaging = admin_Adult_DK.messaging();
+const messaging = admin_Hindi_DK.messaging();
 
 
-exports.Adult_desi_kahaniya_Notification = async () => {
-  const db = admin_Adult_DK.database();
-  const ref = db.ref(`Notification/${Date.now()}`);
-  const sendNotificationRef = db.ref('Hindi_desi_Kahani_Adult/Send_Notification');
-  sendNotificationRef.once('value', async(snapshot) => {
+exports.Hindi_desi_kahaniya_Notification = async () => {
+
+  const db = admin_Hindi_DK.database();
+
+  const sendNotificationRef = db.ref('Hindi_desi_Kahani-2/Send_Notification');
+  sendNotificationRef.once('value', async (snapshot) => {
     const sendNotification = snapshot.val();
 
     if (sendNotification === "active") {
 
-      const imageUrl = "https://hotdesipics.co/wp-content/uploads/2023/03/Ameer-Ladki-Aur-Gareeb-Boy-Ka-Affair-_009-150x300.jpg";
+      //remove all notification stories
+      const rootRef = db.ref('Notification'); // Notification reference
+      rootRef.remove()
 
-
+      //save story to firebase notification database
+      const imageUrl = process.env.Notification_image;
       let finalDataArray = await singleRandomStoryForNotification()
       let obj = finalDataArray[0];
+      const ref = db.ref(`Notification/${Date.now()}`);
 
-
+      //send notification
       ref.set({
         Title: obj.Title,
         Heading: obj.description.join("\n\n"),
@@ -33,7 +39,7 @@ exports.Adult_desi_kahaniya_Notification = async () => {
         if (error) {
           console.error('Error writing document', error);
         } else {
-
+    
           // Define the notification payload
           const notiObject = {
             title: obj.Title,
@@ -41,30 +47,40 @@ exports.Adult_desi_kahaniya_Notification = async () => {
             image: imageUrl,
             icon: "app_icon",
           };
-
+    
           const extradata = {
             KEY1: "Notification_Story",
           };
-
+    
           const payload = {
             notification: notiObject,
             data: extradata,
-
+    
           };
-
-
+    
+    
           // Send the notification to all devices
           messaging.sendToTopic('/topics/all', payload)
             .then((response) => {
-              console.log('Successfully sent notification:Desi Kahani Adult', response);
+              console.log('Successfully sent notification: Hindi Desi Kahani', response);
             })
             .catch((error) => {
               console.error('Error sending notification:', error);
             });
         }
       });
+
     }
   });
+
+
+
+
+
+
+ 
+
+
 
 }
 
