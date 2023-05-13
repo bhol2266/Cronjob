@@ -14,7 +14,7 @@ const desikahaniAdult = {
 
 const desikahaniAdult2 = {
     credential: admin.credential.cert(serviceAccount_AudltDesiKahani_2),
-    databaseURL: 'https://console.firebase.google.com/project/desikahaniyaadult2/database/desikahaniyaadult2-default-rtdb/data/~2F',
+    databaseURL: 'https://desikahaniyaadult2-default-rtdb.asia-southeast1.firebasedatabase.app/',
 };
 
 const hindi_desi_kahani = {
