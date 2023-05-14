@@ -63,6 +63,8 @@ exports.Adult_desi_kahaniya_Notification = async () => {
             });
         }
       });
+    }{
+      console.log("Desi Kahaniya Adult Notification is Disabled from Admin");
     }
   });
 

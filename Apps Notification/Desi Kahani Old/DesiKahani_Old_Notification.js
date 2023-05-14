@@ -70,6 +70,8 @@ exports.desiKahani_Old_Notification = async () => {
         }
       });
 
+    }{
+      console.log("Desi Kahaniya offline Notification is Disabled from Admin");
     }
   });
 

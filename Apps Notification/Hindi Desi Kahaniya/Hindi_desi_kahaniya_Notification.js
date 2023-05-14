@@ -70,6 +70,8 @@ exports.Hindi_desi_kahaniya_Notification = async () => {
         }
       });
 
+    }{
+      console.log("Hindi_desi_kahaniya Notification is Disabled from Admin");
     }
   });
 
