@@ -339,7 +339,8 @@ async function insertPicThumbnail() {
 
 setTimeout(() => {
   // deleteVideoDetail() // remove storyDetail documents that is not scrapped properly
-//   Adult_desi_kahaniya_Notification();
+  // Adult_desi_kahaniya_Notification2();
+
 
 }, 5000);
 
