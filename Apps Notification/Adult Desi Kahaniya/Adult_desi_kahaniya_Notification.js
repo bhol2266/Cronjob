@@ -17,9 +17,11 @@ exports.Adult_desi_kahaniya_Notification = async () => {
 
     if (sendNotification === "active") {
 
+      //remove all notification stories
+      const rootRef = db.ref("Notification"); // Notification reference
+      rootRef.remove();
+      
       const imageUrl = process.env.Notification_image;
-
-
       let finalDataArray = await singleRandomStoryForNotification()
       let obj = finalDataArray[0];
 
