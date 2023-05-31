@@ -84,9 +84,9 @@ const {
 const chutlundslive_DeployHook =
   "https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2";
 const desiKahani_DeployHook =
-  "https://api.vercel.com/v1/integrations/deploy/prj_B3rQ4A5oZTfQvkLzIKw5l5QubA6m/TedDS2ajn7";
+  "https://api.vercel.com/v1/integrations/deploy/prj_o5HbtSiGiemCbVOSludcgNAXivnP/h19jWwprSF";
 const chutlundscom_DeployHook =
-  "https://api.vercel.com/v1/integrations/deploy/prj_Ug2Ps3DBCILSKTXGxJwrPWQgHuYF/6FDww8cuPV";
+  "https://api.vercel.com/v1/integrations/deploy/prj_uvelojDpqFoMlKsJfSXvKQENyJIZ/P9tB2VrHKK";
 
 // const schedule = require('node-schedule');
 if (process.env.NODE_ENV !== "production") {
