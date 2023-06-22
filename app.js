@@ -84,7 +84,7 @@ const {
 const chutlundslive_DeployHook =
   "https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2";
 const desiKahani_DeployHook =
-  "https://api.vercel.com/v1/integrations/deploy/prj_o5HbtSiGiemCbVOSludcgNAXivnP/h19jWwprSF";
+  "https://api.vercel.com/v1/integrations/deploy/prj_lh3yPimt3Q7HwFlod7d23pJhYGh1/2jtbPzoURw";
 const chutlundscom_DeployHook =
   "https://api.vercel.com/v1/integrations/deploy/prj_uvelojDpqFoMlKsJfSXvKQENyJIZ/P9tB2VrHKK";
 
