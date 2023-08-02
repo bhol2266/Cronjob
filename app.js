@@ -81,6 +81,11 @@ const {
   desiKahani_Old_Notification,
 } = require("./Apps Notification/Desi Kahani Old/DesiKahani_Old_Notification.js");
 
+const {
+  DesiGirls_VideoChat_Notification,
+} = require("./Apps Notification/DesiGirls VideoChat/DesiGirls_LiveVideoChat_Notification.js");
+
+
 const chutlundslive_DeployHook =
   "https://api.vercel.com/v1/integrations/deploy/prj_35llC1epMrjIFZMX7ympxwUXzF7P/5wF67DyvB2";
 const desiKahani_DeployHook =
@@ -259,6 +264,8 @@ try {
       Adult_desi_kahaniya_Notification2();
       Hindi_desi_kahaniya_Notification();
       desiKahani_Old_Notification();
+      DesiGirls_VideoChat_Notification();
+
 
     },
     {
@@ -275,6 +282,8 @@ try {
       Adult_desi_kahaniya_Notification2();
       Hindi_desi_kahaniya_Notification();
       desiKahani_Old_Notification();
+      DesiGirls_VideoChat_Notification();
+
     },
     {
       timezone: "Asia/Kolkata", // Set the timezone to Indian Standard Time
@@ -338,10 +347,6 @@ async function insertPicThumbnail() {
 //  insertpicToFirebase()
 
 setTimeout(() => {
-  // deleteVideoDetail() // remove storyDetail documents that is not scrapped properly
-  // Adult_desi_kahaniya_Notification2();
-  
-
 
 }, 5000);
 
