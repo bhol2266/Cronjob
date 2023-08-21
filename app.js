@@ -11,6 +11,7 @@ const { freeSexkahani } = require("./config/freeSexkahani");
 const { videoPageData } = require("./config/videoPageData");
 const { hotdesipics } = require("./config/hotdesipics");
 const { fullalbum } = require("./config/fullalbumScrap");
+const { uploadAudioFile } = require("./aws.js");
 const {
   freeSexkahaniStory_details,
 } = require("./config/freeSexkahaniStory_details");
@@ -71,7 +72,7 @@ const {
   Adult_desi_kahaniya_Notification,
 } = require("./Apps Notification/Adult Desi Kahaniya/Adult_desi_kahaniya_Notification");
 const {
-    Adult_desi_kahaniya_Notification2,
+  Adult_desi_kahaniya_Notification2,
 } = require("./Apps Notification/Adult Desi Kahaniya 2/Adult_desi_kahaniya2_Notification.js");
 
 const {
@@ -304,7 +305,7 @@ try {
       timezone: "Asia/Kolkata", // Set the timezone to Indian Standard Time
     }
   );
-} catch (error) {}
+} catch (error) { }
 
 const bucket = admin_DesiKahaniNextjs.storage().bucket();
 
@@ -348,6 +349,8 @@ async function insertPicThumbnail() {
 
 setTimeout(() => {
 
+  // uploadAudioFile("https://www.freesexkahani.com/group-sex-stories/wife-husband-swap-story/", { day: "02", month: "07", year: "2023" })
+
 }, 5000);
 
 app.post("/story_detailsAPI", async (req, res) => {
@@ -386,6 +389,16 @@ app.post("/HomepageStoriesUpdate", async (req, res) => {
         let obj = await checkStoryItemExists(item.Title);
         if (obj == null) {
           await saveStoryItem(item);
+          if (item.tags.length != 0) {
+
+            for (let index = 0; index < item.tags.length; index++) {
+              if (item.tags[index].name == "Audio Sex Story") {
+                await uploadAudioFile(item.href, item.date)
+              }
+
+            }
+
+          }
         }
       });
     }
