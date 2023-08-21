@@ -7,6 +7,9 @@ const serviceAccount_AudltDesiKahani_2 = require('./Apps Notification/Adult Desi
 const serviceAccount_DesiGirls_VideoChat = require('./Apps Notification/DesiGirls VideoChat/serviceAccountKey.json')
 
 
+const serviceAccount_DesiGirls_VideoChat2 = require('./Apps Notification/Live Desi Girls 2/serviceAccountKey.json')
+
+
 //multiple firebase account initialize
 
 const desikahaniAdult = {
@@ -42,6 +45,12 @@ const desiGirls_VideoChat = {
 
 };
 
+const desiGirls_VideoChat2 = {
+    credential: admin.credential.cert(serviceAccount_DesiGirls_VideoChat2),
+    databaseURL: 'https://live-video-chat-2-default-rtdb.asia-southeast1.firebasedatabase.app/',
+
+};
+
 
 const admin_Adult_DK = admin.initializeApp(desikahaniAdult, 'admin_Adult_DK');
 const admin_Adult2_DK = admin.initializeApp(desikahaniAdult2, 'admin_Adult2_DK');
@@ -49,6 +58,7 @@ const admin_Hindi_DK = admin.initializeApp(hindi_desi_kahani, 'admin_Hindi_DK');
 const admin_DesiKahaniNextjs = admin.initializeApp(desiKahaniNextjs, 'admin_DesiKahaniNextjs');
 const admin_DesiKahaniOld = admin.initializeApp(desiKahaniOld, 'admin_DesiKahaniOld');
 const admin_DesiGirls_Videochat = admin.initializeApp(desiGirls_VideoChat, 'admin_DesiGirls_VideoChat');
+const admin_DesiGirls_Videochat2 = admin.initializeApp(desiGirls_VideoChat2, 'admin_DesiGirls_VideoChat2');
 
 module.exports = {
     admin_Adult_DK,
@@ -56,5 +66,6 @@ module.exports = {
     admin_Hindi_DK,
     admin_DesiKahaniNextjs,
     admin_DesiKahaniOld,
-    admin_DesiGirls_Videochat
+    admin_DesiGirls_Videochat,
+    admin_DesiGirls_Videochat2
 };
