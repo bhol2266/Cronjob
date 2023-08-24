@@ -12,7 +12,7 @@ const {
   saveStory,
   checkStoryItemExists,
   getStoryItems_forApp,
-} = require("../db_query/story_detailsQuery");
+} = require("./db_query/story_detailsQuery");
 
 const app = express();
 const port = process.env.PORT || 5000;
