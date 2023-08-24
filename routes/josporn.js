@@ -39,7 +39,8 @@ router.post("/jospornVideoPage", async (req, res) => {
     if (obj != null) {
       obj.duration = "";
 
-      await saveVideoDetail(obj);
+
+      await saveVideoDetail(obj).catch(err => err);
 
 
       res.status(200).json({
