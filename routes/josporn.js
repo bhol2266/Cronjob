@@ -8,6 +8,7 @@ const { videolist_Scrape_search } = require("../config/jospornScrape/videolist_S
 const {
   checkVideoDetailsExist_DB,
   saveVideoDetail,
+  saveVideoItem,
   randomVideolist,
   getVideoItemByPage,
   checkVideoItemExist_DB,
@@ -28,6 +29,16 @@ router.post("/jospornVideoPage", async (req, res) => {
   let href = checkVideoItemExist.href;
 
   var relatedVideos = await videolist_Scrape(href);
+  for (let index = 0; index < relatedVideos.length; index++) {
+    const obj = relatedVideos[index];
+    try {
+      await saveVideoItem(obj)
+
+    } catch (error) {
+    }
+
+  }
+
   var randomVideos = await randomVideolist();
   var suggestedVideoItems = [...relatedVideos, ...randomVideos];
 
@@ -45,7 +56,6 @@ router.post("/jospornVideoPage", async (req, res) => {
         videoDetailsObj: videoDetailsObj,
         suggestedVideoItems: suggestedVideoItems,
         success: true,
-        screenshots: checkVideoItemExist.screenshots
 
       });
     } else {
@@ -53,7 +63,6 @@ router.post("/jospornVideoPage", async (req, res) => {
         videoDetailsObj: videoDetailsObj,
         suggestedVideoItems: suggestedVideoItems,
         success: false,
-        screenshots: checkVideoItemExist.screenshots
 
       });
     }
@@ -63,11 +72,9 @@ router.post("/jospornVideoPage", async (req, res) => {
       videoDetailsObj: videoDetailsObj,
       suggestedVideoItems: suggestedVideoItems,
       success: true,
-      screenshots: checkVideoItemExist.screenshots
     });
   }
 });
-
 
 router.post("/jsoporn_videolist_category", async (req, res) => {
   let page = req.body.page;
