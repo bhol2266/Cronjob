@@ -23,22 +23,11 @@ const {
 router.post("/jospornVideoPage", async (req, res) => {
 
   let title = req.body.title;
-  const checkVideoItemExist = await checkVideoItemExist_DB(title);
+  let number = req.body.number;
 
-
-  let href = checkVideoItemExist.href;
+  let href = `https://josporn.club/videos/${number}-${title}`;
 
   var relatedVideos = await videolist_Scrape(href);
-  for (let index = 0; index < relatedVideos.length; index++) {
-    const obj = relatedVideos[index];
-    try {
-      await saveVideoItem(obj)
-
-    } catch (error) {
-    }
-
-  }
-
   var randomVideos = await randomVideolist();
   var suggestedVideoItems = [...relatedVideos, ...randomVideos];
 
@@ -48,7 +37,8 @@ router.post("/jospornVideoPage", async (req, res) => {
   if (videoDetailsObj == null) {
     const obj = await videopageDetails_Scrape(href);
     if (obj != null) {
-      obj.duration = checkVideoItemExist.duration;
+      obj.duration = "";
+
       await saveVideoDetail(obj);
 
 
@@ -80,6 +70,7 @@ router.post("/jsoporn_videolist_category", async (req, res) => {
   let page = req.body.page;
   var category = req.body.category;
 
+  console.log("pagecount");
 
 
   var finalDataArray = await getVideoItemByCategory(page, category);
@@ -87,6 +78,7 @@ router.post("/jsoporn_videolist_category", async (req, res) => {
   var pagecount = await VIDEOITEMS_DB_COUNT_CATEGORY(category);
 
 
+  console.log(pagecount);
 
 
   if (finalDataArray.length == 0) {
