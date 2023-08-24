@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const db_desiakahaniya=require('../config/desiKahaniya_dbConnect')
+
 
 const StoryDetailSchema = new mongoose.Schema({
 
@@ -19,5 +21,5 @@ const StoryDetailSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 mongoose.models = {}
-module.exports = mongoose.model('StoryModel', StoryDetailSchema)
+module.exports = db_desiakahaniya.model('StoryModel', StoryDetailSchema)
 

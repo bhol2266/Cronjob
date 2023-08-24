@@ -1,5 +1,9 @@
 
 const mongoose = require('mongoose');
+const db_desiakahaniya=require('../config/desiKahaniya_dbConnect')
+
+
+
 const VideoItemSchema = new mongoose.Schema({
 
     Title: { type: String },
@@ -17,5 +21,5 @@ const VideoItemSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 mongoose.models = {}
-module.exports = mongoose.model('VideoItemModel', VideoItemSchema)
+module.exports = db_desiakahaniya.model('VideoItemModel', VideoItemSchema)
 

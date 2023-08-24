@@ -6,7 +6,8 @@ const { runDeployhooks } = require('./config/DeployHook');
 const desiKahaniyaRoutes = require('./routes/desikahaniya.js');
 const codeoutRoutes = require('./routes/codeouts.js');
 const jospornRoutes = require('./routes/josporn.js');
-const desiKahaniya_dbConnect = require('./config/desiKahaniya_dbConnect.js'); // Import the database connection function
+const desiKahaniya_dbConnect = require('./config/desiKahaniya_dbConnect'); 
+const josporn_dbConnect = require('./config/josporn_dbConnect'); 
 const {
   checkStoryExists,
   saveStory,
@@ -21,8 +22,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-// Connect to MongoDB
-desiKahaniya_dbConnect();
+
 
 
 app.use(bodyParser.json({ limit: "50mb" }));

@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const db_desiakahaniya=require('../config/desiKahaniya_dbConnect')
+
 
 const PicDetailSchema = new mongoose.Schema({
 
@@ -8,5 +10,5 @@ const PicDetailSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 mongoose.models = {}
-module.exports = mongoose.model('PicModel', PicDetailSchema)
+module.exports = db_desiakahaniya.model('PicModel', PicDetailSchema)
 

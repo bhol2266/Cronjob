@@ -1,15 +1,21 @@
+
+
 const mongoose = require("mongoose");
 
 mongoose.set("strictQuery", false);
 
-module.exports = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("Mongoose Is Connected");
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-  }
-};
+const db_desiakahaniya = mongoose.createConnection("mongodb+srv://bhola:IyNs48Pf1SNHUWpu@cluster0.acjho.mongodb.net/desikahaniya?retryWrites=true&w=majority", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+db_desiakahaniya.on('error', error => {
+  console.error("Error connecting to db_desiakahaniya:", error);
+});
+
+db_desiakahaniya.once('open', () => {
+  console.log('Connected to db_desiakahaniya');
+});
+
+module.exports = db_desiakahaniya;
+
