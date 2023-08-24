@@ -7,6 +7,12 @@ const desiKahaniyaRoutes = require('./routes/desikahaniya.js');
 const codeoutRoutes = require('./routes/codeouts.js');
 const jospornRoutes = require('./routes/josporn.js');
 const desiKahaniya_dbConnect = require('./config/desiKahaniya_dbConnect.js'); // Import the database connection function
+const {
+  checkStoryExists,
+  saveStory,
+  checkStoryItemExists,
+  getStoryItems_forApp,
+} = require("../db_query/story_detailsQuery");
 
 const app = express();
 const port = process.env.PORT || 5000;
