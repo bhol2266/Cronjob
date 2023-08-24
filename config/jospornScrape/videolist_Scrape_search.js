@@ -3,18 +3,18 @@ const cheerio = require("cheerio");
 const extractUrls = require("extract-urls");
 
 
+async function videolist_Scrape_search(url) {
 
 
- exports.videolist_Scrape_search=async(url)=> {
   const response = await axios.get(url);
   const body = await response.data;
   const $$ = cheerio.load(body);
 
-  
-  
+
+
   var finalDataArray = [];
-  var lastpage="0";
-  
+  var lastpage = "0";
+
   lastpage = $$('.navigation a').last().text();
   $$(".contentlist #preview").each((i, el) => {
     var title = "";
@@ -57,5 +57,8 @@ const extractUrls = require("extract-urls");
     }
   });
 
-  return {finalDataArray,lastpage};
+  return { finalDataArray, lastpage };
 }
+
+
+module.exports = { videolist_Scrape_search };

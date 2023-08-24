@@ -2,9 +2,8 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const extractUrls = require("extract-urls");
 
+async function videopageDetails_Scrape(url) {
 
-
-exports.videopageDetails_Scrape=async(url)=> {
 
   const response = await axios.get(url);
   const body = await response.data;
@@ -61,5 +60,6 @@ exports.videopageDetails_Scrape=async(url)=> {
   return obj;
 };
 
-  
- 
+
+
+module.exports = { videopageDetails_Scrape };
