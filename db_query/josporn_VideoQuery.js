@@ -45,15 +45,8 @@ exports.getVideoItemByCategory = async function (page, category) {
     if (skip < 0) {
         skip = 0
     }
-    const items = await VideoDetail.find({ catergories: category }).sort({ 'date': -1 }).skip(skip).limit(40)
-
-    let dataArray=[]
-    for (let index = 0; index < items.length; index++) {
-        const obj = await VideoItem.find({ title: items[index].title })
-        dataArray.push(obj[0])
-    }
-
-    return dataArray
+    const items = await VideoItem.find({ catergories: category }).sort({ 'date': -1 }).skip(skip).limit(40)
+    return items
 }
 
 exports.VIDEOITEMS_DB_COUNT = async function () {
