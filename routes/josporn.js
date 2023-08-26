@@ -18,6 +18,44 @@ const {
 } = require("../db_query/josporn_VideoQuery");
 
 
+router.post("/jsoporn_videolist", async (req, res) => {
+
+  let page = req.body.page;
+
+  var newVideos = await videolist_Scrape("https://josporn.club/latest-updates/page/1/");
+
+  for (let index = 0; index < newVideos.length; index++) {
+    const itemExist = await checkVideoItemExist_DB(newVideos[index].title);
+    if (itemExist == null) {
+      const currentTimestamp = Date.now();
+      newVideos[index].date=currentTimestamp
+      
+      let obj = await videopageDetails_Scrape(newVideos[index].href)
+      newVideos[index].catergories=obj.catergories
+
+      await saveVideoItem(newVideos[index]).catch(err => err);
+    }
+  }
+
+  var finalDataArray = await getVideoItemByPage(page);
+
+  var pagecount = await VIDEOITEMS_DB_COUNT();
+
+  if (finalDataArray.length == 0) {
+    res.status(200).json({
+      finalDataArray: finalDataArray,
+      pages: pagecount,
+      noVideos: true,
+    });
+  } else {
+    res.status(200).json({
+      finalDataArray: finalDataArray,
+      pages: Math.round(pagecount / 40),
+      noVideos: false,
+    });
+  }
+
+});
 
 
 router.post("/jospornVideoPage", async (req, res) => {
@@ -38,10 +76,7 @@ router.post("/jospornVideoPage", async (req, res) => {
     const obj = await videopageDetails_Scrape(href);
     if (obj != null) {
       obj.duration = "";
-
-
       await saveVideoDetail(obj).catch(err => err);
-
 
       res.status(200).json({
         videoDetailsObj: videoDetailsObj,
@@ -71,15 +106,9 @@ router.post("/jsoporn_videolist_category", async (req, res) => {
   let page = req.body.page;
   var category = req.body.category;
 
-  console.log("pagecount");
-
 
   var finalDataArray = await getVideoItemByCategory(page, category);
-
   var pagecount = await VIDEOITEMS_DB_COUNT_CATEGORY(category);
-
-
-  console.log(pagecount);
 
 
   if (finalDataArray.length == 0) {
@@ -126,29 +155,6 @@ router.post("/jsoporn_videolist_search", async (req, res) => {
 
 
 
-router.post("/jsoporn_videolist", async (req, res) => {
-
-  let page = req.body.page;
-
-  var finalDataArray = await getVideoItemByPage(page);
-
-  var pagecount = await VIDEOITEMS_DB_COUNT();
-
-  if (finalDataArray.length == 0) {
-    res.status(200).json({
-      finalDataArray: finalDataArray,
-      pages: pagecount,
-      noVideos: true,
-    });
-  } else {
-    res.status(200).json({
-      finalDataArray: finalDataArray,
-      pages: Math.round(pagecount / 40),
-      noVideos: false,
-    });
-  }
-
-});
 
 
 

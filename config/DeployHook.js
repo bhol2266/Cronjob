@@ -15,18 +15,19 @@ function runDeployhooks() {
       axios
         .get(
           "http://desikahaniya.in/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf"
-        )
-        .then(function (response) {
-          console.log(response.data);
-        })
-        .catch((error) => console.log(error));
+        ).catch((error) => console.log(error));
+
+      axios
+        .get(
+          "https://www.fuckvideo.live/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf"
+        ).catch((error) => console.log(error));
     });
-  
+
     // Deploy hooks cron job running every 3 days
     cron.schedule("0 0 */3 * *", () => {
       console.log(new Date(), "Cronjob Executed");
       axios.get(chutlundslive_DeployHook).catch((error) => console.log(error));
-    //   axios.get(desiKahani_DeployHook).catch((error) => console.log(error));
+      //   axios.get(desiKahani_DeployHook).catch((error) => console.log(error));
       axios.get(chutlundscom_DeployHook).catch((error) => console.log(error));
     });
 

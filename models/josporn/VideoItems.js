@@ -10,6 +10,7 @@ const videoItem_Schema = new mongoose.Schema({
     likePercent: String,
     thumbnail: String,
     screenshots: [String],
+    catergories: [String],
     href: String,
     number: String,
     date:Number
