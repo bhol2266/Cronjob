@@ -8,10 +8,12 @@ const { Hindi_desi_kahaniya_Notification } = require("../Apps Notification/Hindi
 const { desiKahani_Old_Notification } = require("../Apps Notification/Desi Kahani Old/DesiKahani_Old_Notification.js");
 const { DesiGirls_VideoChat_Notification } = require("../Apps Notification/DesiGirls VideoChat/DesiGirls_LiveVideoChat_Notification.js");
 const { DesiGirls_VideoChat2_Notification } = require("../Apps Notification/Live Desi Girls 2/LiveDesi_VideoChat2_Notification.js");
+const { DesiGirls_VideoChat3_Notification } = require("../Apps Notification/Live Desi Girls 3/LiveDesi_VideoChat3_Notification.js");
 
 
 
 function showAppsNotification() {
+
 
   // Creating a cron job which runs on every 2days
   try {
@@ -27,6 +29,7 @@ function showAppsNotification() {
         desiKahani_Old_Notification();
         DesiGirls_VideoChat_Notification();
         DesiGirls_VideoChat2_Notification();
+        DesiGirls_VideoChat3_Notification();
 
 
 
@@ -47,6 +50,7 @@ function showAppsNotification() {
         desiKahani_Old_Notification();
         DesiGirls_VideoChat_Notification();
         DesiGirls_VideoChat2_Notification();
+        DesiGirls_VideoChat3_Notification();
 
 
       },
@@ -72,5 +76,6 @@ function showAppsNotification() {
   } catch (error) { }
 
 }
+
 
 module.exports = { showAppsNotification };

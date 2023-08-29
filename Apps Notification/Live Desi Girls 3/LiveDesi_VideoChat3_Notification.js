@@ -1,12 +1,12 @@
-const { admin_DesiGirls_Videochat } = require("../../firebase.js");
+const { admin_DesiGirls_Videochat3 } = require("../../firebase.js");
 const {indianWomenNames,imagesArray}= require("../../config/dataResource.js");
 
 
 // Get a reference to the FCM messaging service
-const messaging = admin_DesiGirls_Videochat.messaging();
+const messaging = admin_DesiGirls_Videochat3.messaging();
 
-exports.DesiGirls_VideoChat_Notification = async () => {
-  const db = admin_DesiGirls_Videochat.database();
+exports.DesiGirls_VideoChat3_Notification = async () => {
+  const db = admin_DesiGirls_Videochat3.database();
 
   const sendNotificationRef = db.ref("Desi_Girls_Video_Chat/Send_Notification");
   sendNotificationRef.once("value", async (snapshot) => {
@@ -44,7 +44,7 @@ exports.DesiGirls_VideoChat_Notification = async () => {
       messaging.sendToTopic("/topics/all", payload)
         .then((response) => {
           console.log(
-            "Successfully sent notification: DesiGirls VideoChat",
+            "Successfully sent notification: Live Desi Girls VideoChat 3",
             response
           );
         })
@@ -52,7 +52,7 @@ exports.DesiGirls_VideoChat_Notification = async () => {
           console.error("Error sending notification:", error);
         });
     } else {
-      console.log("DesiGirls_VideoChat Notification is Disabled from Admin");
+      console.log("Live Desi Girls VideoChat 3 Notification is Disabled from Admin");
     }
   });
 };
