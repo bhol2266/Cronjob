@@ -6,7 +6,7 @@ const chutlundslive_DeployHook =
 const desiKahani_DeployHook =
   "https://api.vercel.com/v1/integrations/deploy/prj_lh3yPimt3Q7HwFlod7d23pJhYGh1/2jtbPzoURw";
 const chutlundscom_DeployHook =
-  "https://api.vercel.com/v1/integrations/deploy/prj_uvelojDpqFoMlKsJfSXvKQENyJIZ/P9tB2VrHKK";
+  "https://api.vercel.com/v1/integrations/deploy/prj_XBSCvDoBY1watYKtkn73WM8ymRv5/mWF64HP8EJ";
 
 function runDeployhooks() {
   try {
