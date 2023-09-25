@@ -314,7 +314,7 @@ exports.getVideoPageData = async (href) => {
     const returnObj = {
         videolink_qualities_screenshots: finalDataArray,
         preloaded_video_quality: preloaded_video_quality,
-        relatedVideos: relatedVideos.length > 50 ? relatedVideos.slice(0, 50) : relatedVideos,
+        relatedVideos: relatedVideos.length > 100 ? relatedVideos.slice(0, 100) : relatedVideos,
         pornstar: pornstar,
         video_details: videodetails,
         noVideos: noVideos,
