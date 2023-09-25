@@ -311,15 +311,15 @@ exports.getVideoPageData = async (href) => {
             relatedVideos = obj.finalDataArray;
         }
     }
-    const returnObj={
+    const returnObj = {
         videolink_qualities_screenshots: finalDataArray,
         preloaded_video_quality: preloaded_video_quality,
-        relatedVideos: relatedVideos,
+        relatedVideos: relatedVideos.length > 50 ? relatedVideos.slice(0, 50) : relatedVideos,
         pornstar: pornstar,
         video_details: videodetails,
         noVideos: noVideos,
     }
     return returnObj;
-    
+
 }
 
