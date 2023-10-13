@@ -21,6 +21,13 @@ function runDeployhooks() {
         .get(
           "https://www.fuckvideo.live/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf"
         ).catch((error) => console.log(error));
+
+      axios
+        .get(
+          "https://www.chutlunds.com/api/revalidate"
+        ).catch((error) => console.log(error));
+
+      
     });
 
     // Deploy hooks cron job running every 3 days
