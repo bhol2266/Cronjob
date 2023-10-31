@@ -24,7 +24,7 @@ function runDeployhooks() {
 
       axios
         .get(
-          "https://www.chutlunds.com/api/revalidate"
+          "https://www.chutlunds.com/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf"
         ).catch((error) => console.log(error));
 
       
