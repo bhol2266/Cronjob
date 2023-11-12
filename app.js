@@ -9,6 +9,7 @@ const jospornRoutes = require('./routes/josporn.js');
 const desiKahaniya_dbConnect = require('./config/desiKahaniya_dbConnect');
 const josporn_dbConnect = require('./config/josporn_dbConnect');
 const { getVideoPageData } = require("./config/spangbangScrape/chutlunds_videoPlayer")
+const { getHomePageVideos } = require("./config/spangbangScrape/getHomepageVideos.js")
 const {
   checkStoryExists,
   saveStory,
@@ -93,30 +94,16 @@ app.post("/storiesDetailsByTitle", async (req, res) => {
   }
 });
 
-app.post("/getVideoPageDetails", async (req, res) => {
+app.post("/getHomePageVideos", async (req, res) => {
   const { href } = req.body;
 
 
-  var videolink_qualities_screenshots = {}
-  var preloaded_video_quality = ''
-  var relatedVideos = []
-  var pornstar = []
-  var videodetails = {}
-  var noVideos = false
-  var serverError = false
-
-
   try {
-    const data = await getVideoPageData(href)
-    videolink_qualities_screenshots = data.videolink_qualities_screenshots
-    preloaded_video_quality = data.preloaded_video_quality
-    relatedVideos = data.relatedVideos
-    pornstar = data.pornstar
-    videodetails = data.video_details
-    noVideos = data.noVideos
+  const { finalDataArray_Arrar } = await getHomePageVideos(href);
+
     return res
       .status(200)
-      .json({ success: true, data: data });
+      .json({ success: true, data: finalDataArray_Arrar });
   } catch (error) {
     serverError = true
     return res
