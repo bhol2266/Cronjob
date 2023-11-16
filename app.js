@@ -10,6 +10,8 @@ const desiKahaniya_dbConnect = require('./config/desiKahaniya_dbConnect');
 const josporn_dbConnect = require('./config/josporn_dbConnect');
 const { getVideoPageData } = require("./config/spangbangScrape/chutlunds_videoPlayer")
 const { getHomePageVideos } = require("./config/spangbangScrape/getHomepageVideos.js")
+const { Translate } = require('@google-cloud/translate').v2;
+
 const {
   checkStoryExists,
   saveStory,
@@ -113,6 +115,38 @@ app.post("/getHomePageVideos", async (req, res) => {
 
 });
 
+
+const keyFilename="./config/google_cloud_sk.json"
+const projectId = 'node-js-399016';
+const translate = new Translate({ projectId, keyFilename });
+
+app.post("/languageTranslate", async (req, res) => {
+  const { text,langCode } = req.body;
+var translatedext=null;
+
+  async function translateText(text, targetLanguage) {
+    try {
+      const [translation] = await translate.translate(text, targetLanguage);
+      console.log(`Text: ${text}`);
+      console.log(`Translation: ${translation}`);
+      translatedext=translation
+    } catch (error) {
+      console.error('Translation error:', error);
+    }
+  }
+  
+  // Usage example
+  const textToTranslate = text;
+  const targetLanguage = langCode; // French
+  
+ await translateText(textToTranslate, targetLanguage);
+
+  // return res.status(200).json({ success: false, message: Title });
+
+  return res
+  .status(200)
+  .json({ success: true, langCode: langCode, translatedext: translatedext });
+});
 
 
 
