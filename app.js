@@ -105,7 +105,7 @@ app.post("/getHomePageVideos", async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, data: finalDataArray_Arrar });
+      .json({ success: true, finalDataArray: finalDataArray_Arrar });
   } catch (error) {
     serverError = true
     return res
