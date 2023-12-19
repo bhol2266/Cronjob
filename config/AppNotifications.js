@@ -9,6 +9,7 @@ const { desiKahani_Old_Notification } = require("../Apps Notification/Desi Kahan
 const { DesiGirls_VideoChat_Notification } = require("../Apps Notification/DesiGirls VideoChat/DesiGirls_LiveVideoChat_Notification.js");
 const { DesiGirls_VideoChat2_Notification } = require("../Apps Notification/Live Desi Girls 2/LiveDesi_VideoChat2_Notification.js");
 const { DesiGirls_VideoChat3_Notification } = require("../Apps Notification/Live Desi Girls 3/LiveDesi_VideoChat3_Notification.js");
+const { SAXLive_VideoChat_Notification } = require("../Apps Notification/SAX Live/SAXLive_VideoChat_Notification.js");
 
 
 
@@ -30,6 +31,7 @@ function showAppsNotification() {
         DesiGirls_VideoChat_Notification();
         DesiGirls_VideoChat2_Notification();
         DesiGirls_VideoChat3_Notification();
+        SAXLive_VideoChat_Notification();
 
 
 
@@ -51,6 +53,7 @@ function showAppsNotification() {
         DesiGirls_VideoChat_Notification();
         DesiGirls_VideoChat2_Notification();
         DesiGirls_VideoChat3_Notification();
+        SAXLive_VideoChat_Notification();
 
 
       },
