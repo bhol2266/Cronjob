@@ -11,8 +11,10 @@ db_josporn.on('error', error => {
   console.error("Error connecting to db_josporn:", error);
 });
 
-db_josporn.once('open', () => {
-  console.log('Connected to db_josporn');
-});
+
+//This is comitted to stop connecting to the db_josporn due to which the desikahaniya db was not connecting properly
+// db_josporn.once('open', () => {
+//   console.log('Connected to db_josporn');
+// });
 
 module.exports = db_josporn;
