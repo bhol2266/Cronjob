@@ -43,7 +43,6 @@ exports.checkVideoItemExists = async function (story) {
 
 exports.saveVideoItem = async function (data) {
 
-
     const storyItem = new VideoItemModel(data)
     await storyItem.save()
 }
@@ -78,7 +77,6 @@ exports.getVideoItemByPage = async function (page) {
 
 
 exports.getVideoItems_DB_COUNT_TAGS = async function (query) {
-
 
     try {
         return VideoItemModel.find(query).count();
