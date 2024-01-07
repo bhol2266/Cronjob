@@ -3,8 +3,17 @@ const StoryItemModel = require('../models/StoryItemModel') //homepage story item
 
 
 exports.checkStoryExists = async function (href) {
-    const storyExist = await StoryModel.findOne({ href: href })
-    return storyExist
+
+
+    try {
+        const storyExist = await StoryModel.findOne({ href: href })
+        return storyExist
+    } catch (error) {
+        return null
+
+    }
+
+
 
 }
 
@@ -15,8 +24,16 @@ exports.saveStory = async function (data) {
 }
 
 exports.checkStoryItemExists = async function (Title) {
-    const storyItemExist = await StoryItemModel.findOne({ Title: Title })
-    return storyItemExist
+
+    try {
+
+        const storyItemExist = await StoryItemModel.findOne({ Title: Title })
+        return storyItemExist
+    } catch (error) {
+        return null
+
+    }
+
 }
 
 exports.saveStoryItem = async function (data) {
@@ -29,11 +46,23 @@ exports.DB_COUNT = async function () {
 }
 
 exports.DB_COUNT_CATEGORY = async function (query) {
-    return StoryItemModel.find(query).count();
+
+    try {
+        return StoryItemModel.find(query).count();
+
+    } catch (error) {
+        return 0
+    }
 }
 
 exports.DB_COUNT_TAGS = async function (query) {
-    return StoryItemModel.find(query, 'tags').count();
+
+    try {
+        return StoryItemModel.find(query, 'tags').count();
+
+    } catch (error) {
+        return 0
+    }
 }
 
 exports.getStoryItemByPage = async function (page) {
@@ -41,8 +70,14 @@ exports.getStoryItemByPage = async function (page) {
     if (skip < 0) {
         skip = 0
     }
-    const items = await StoryItemModel.find().sort({ 'completeDate': -1 }).skip(skip).limit(12)
-    return items
+
+    try {
+        const items = await StoryItemModel.find().sort({ 'completeDate': -1 }).skip(skip).limit(12)
+        return items
+    } catch (error) {
+        return null
+    }
+
 }
 
 exports.getStoryItemByPageCategory = async function (category, page) {
@@ -50,8 +85,14 @@ exports.getStoryItemByPageCategory = async function (category, page) {
     if (skip < 0) {
         skip = 0
     }
-    const items = await StoryItemModel.find({ category: category }).sort({ 'completeDate': -1 }).skip(skip).limit(12)
-    return items
+
+    try {
+        const items = await StoryItemModel.find({ category: category }).sort({ 'completeDate': -1 }).skip(skip).limit(12)
+        return items
+    } catch (error) {
+        return null
+    }
+
 }
 
 
@@ -60,26 +101,51 @@ exports.getStoryItemByPageTag = async function (query, page) {
     if (skip < 0) {
         skip = 0
     }
-    const items = await StoryItemModel.find(query).sort({ 'completeDate': -1 }).skip(skip).limit(12)
-    return items
+
+    try {
+        const items = await StoryItemModel.find(query).sort({ 'completeDate': -1 }).skip(skip).limit(12)
+        return items
+    } catch (error) {
+        return null
+    }
+
 }
 
 
 exports.getStoryItemByAuthor = async function (author) {
-    const items = await StoryItemModel.find({ 'author.href': author })
-    return items
+
+    try {
+        const items = await StoryItemModel.find({ 'author.href': author })
+        return items
+    } catch (error) {
+        return null
+    }
+
 }
 
 exports.getStoryItemByDate = async function (month, year, page) {
     let skip = parseInt(page) * 12 - 12
     if (skip < 0) {
         skip = 0
-    } const items = await StoryItemModel.find({ 'date.month': month, 'date.year': year }).sort({ 'completeDate': -1 }).skip(skip).limit(12)
-    return items
+    }
+    try {
+        const items = await StoryItemModel.find({ 'date.month': month, 'date.year': year }).sort({ 'completeDate': -1 }).skip(skip).limit(12)
+        return items
+    } catch (error) {
+        return null
+    }
+
+
 }
 
 exports.getStoryItemByDateCOUNT = async function (month, year) {
-    return StoryItemModel.find({ 'date.month': month, 'date.year': year }).count();
+
+    try {
+        return StoryItemModel.find({ 'date.month': month, 'date.year': year }).count();
+
+    } catch (error) {
+        return 0
+    }
 }
 
 
@@ -91,7 +157,17 @@ exports.randomLatestStories = async function (month, year) {
         { $sample: { size: 5 } } // You want to get 5 docs
     ]);
 
-    return items
+    try {
+        const items = await StoryItemModel.aggregate([
+            { $match: { 'date.month': month } }, // filter the results
+            { $sample: { size: 5 } } // You want to get 5 docs
+        ]);
+        return items
+
+    } catch (error) {
+        return null
+    }
+
 }
 
 exports.deleteStoryDetail = async function (href) {
@@ -99,18 +175,33 @@ exports.deleteStoryDetail = async function (href) {
 }
 
 exports.getStoryItems_forApp = async function (completeDate) {
-    const storyItemsArray = await StoryModel.find({ completeDate: { $gt: completeDate } })
-    return storyItemsArray
+
+    try {
+        const storyItemsArray = await StoryModel.find({ completeDate: { $gt: completeDate } })
+        return storyItemsArray
+
+    } catch (error) {
+        return null
+    }
+
 }
 
 exports.singleRandomStoryForNotification = async function () {
 
-    const items = await StoryModel.aggregate([
-        { $match: {  } }, // filter the results
-        { $sample: { size: 1 } } // You want to get 5 docs
-    ]);
+    try {
+        const items = await StoryModel.aggregate([
+            { $match: {} }, // filter the results
+            { $sample: { size: 1 } } // You want to get 5 docs
+        ]);
 
-    return items
+        return items
+
+    } catch (error) {
+        return null
+    }
+
+
+
 }
 
 
