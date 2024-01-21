@@ -42,7 +42,13 @@ exports.saveStoryItem = async function (data) {
 }
 
 exports.DB_COUNT = async function () {
-    return StoryItemModel.count();
+
+    try {
+        return StoryItemModel.count();
+    } catch (error) {
+        return null
+
+    }
 }
 
 exports.DB_COUNT_CATEGORY = async function (query) {
