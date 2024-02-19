@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const { checkforLatestStories } = require('./config/DesiKahani_FirestoreUtils.js');
 const { showAppsNotification } = require('./config/AppNotifications');
 const { runDeployhooks } = require('./config/DeployHook');
 const desiKahaniyaRoutes = require('./routes/desikahaniya.js');
@@ -103,7 +104,7 @@ app.post("/getHomePageVideos", async (req, res) => {
 
 
   try {
-  const { finalDataArray_Arrar } = await getHomePageVideos(href);
+    const { finalDataArray_Arrar } = await getHomePageVideos(href);
 
     return res
       .status(200)
@@ -118,36 +119,36 @@ app.post("/getHomePageVideos", async (req, res) => {
 });
 
 
-const keyFilename="./config/google_cloud_sk.json"
+const keyFilename = "./config/google_cloud_sk.json"
 const projectId = 'node-js-399016';
 const translate = new Translate({ projectId, keyFilename });
 
 app.post("/languageTranslate", async (req, res) => {
-  const { text,langCode } = req.body;
-var translatedext=null;
+  const { text, langCode } = req.body;
+  var translatedext = null;
 
   async function translateText(text, targetLanguage) {
     try {
       const [translation] = await translate.translate(text, targetLanguage);
       console.log(`Text: ${text}`);
       console.log(`Translation: ${translation}`);
-      translatedext=translation
+      translatedext = translation
     } catch (error) {
       console.error('Translation error:', error);
     }
   }
-  
+
   // Usage example
   const textToTranslate = text;
   const targetLanguage = langCode; // French
-  
- await translateText(textToTranslate, targetLanguage);
+
+  await translateText(textToTranslate, targetLanguage);
 
   // return res.status(200).json({ success: false, message: Title });
 
   return res
-  .status(200)
-  .json({ success: true, langCode: langCode, translatedext: translatedext });
+    .status(200)
+    .json({ success: true, langCode: langCode, translatedext: translatedext });
 });
 
 
@@ -161,3 +162,4 @@ app.listen(port, () => {
 // Set up cron jobs
 showAppsNotification();
 runDeployhooks();
+checkforLatestStories();
