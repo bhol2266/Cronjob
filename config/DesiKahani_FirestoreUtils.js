@@ -20,7 +20,7 @@ async function upload_storyitemmodels_firestore(item) {
         }
         console.log('DesiKahani stories on Firestore updated successfully!');
     } catch (error) {
-        console.error('Error uploading data:', error);
+        console.error('Error upload_storyitemmodels_firestore data:', error);
     }
 }
 
@@ -39,7 +39,7 @@ async function upload_storymodels_firestore(item) {
         }
 
     } catch (error) {
-        console.error('Error uploading data:', error);
+        console.error('Error upload_storymodels_firestore data:', error);
     }
 }
 
@@ -50,10 +50,15 @@ async function checkforLatestStories() {
 
     cron.schedule("0 0 * * *", async () => {
 
-        const { finalDataArray } = await freeSexkahani(`https://www.freesexkahani.com/page/1/`);
-        finalDataArray.forEach(async (item) => {
-            await upload_storyitemmodels_firestore(item);
-        });
+        try {
+            const { finalDataArray } = await freeSexkahani(`https://www.freesexkahani.com/page/1/`);
+            finalDataArray.forEach(async (item) => {
+                await upload_storyitemmodels_firestore(item);
+            });
+        } catch (error) {
+            console.error('Error checkforLatestStories :', error);
+
+        }
 
     });
 

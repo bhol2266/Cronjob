@@ -14,7 +14,12 @@ exports.savePublishStory = async function (data) {
 
 
 exports.DB_COUNT = async function () {
-    return StoryItemModel.count();
+    try {
+        return StoryItemModel.count();
+    } catch (error) {
+        return null
+
+    }
 }
 
 exports.deleteStoryDetail = async function () {
