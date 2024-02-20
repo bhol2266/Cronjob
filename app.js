@@ -7,6 +7,7 @@ const { runDeployhooks } = require('./config/DeployHook');
 const desiKahaniyaRoutes = require('./routes/desikahaniya.js');
 const codeoutRoutes = require('./routes/codeouts.js');
 const jospornRoutes = require('./routes/josporn.js');
+const chutlundsRoutes = require('./routes/chutlunds.js');
 const desiKahaniya_dbConnect = require('./config/desiKahaniya_dbConnect');
 const josporn_dbConnect = require('./config/josporn_dbConnect');
 const { getVideoPageData } = require("./config/spangbangScrape/chutlunds_videoPlayer")
@@ -39,6 +40,7 @@ app.use(cors());
 app.use('/desikahaniya', desiKahaniyaRoutes);
 app.use('/codeouts', codeoutRoutes);
 app.use('/josporn', jospornRoutes);
+app.use('/chutlunds', chutlundsRoutes);
 
 
 //Deso Kahani Mobile App APIs
