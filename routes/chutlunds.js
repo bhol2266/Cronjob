@@ -447,3 +447,4 @@ router.post("/verifyOtp", async (req, res) => {
 });
 
 
+module.exports = router;

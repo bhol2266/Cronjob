@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const db_desiakahaniya=require('../../config/desiKahaniya_dbConnect')
+
 
 const UserSchema = new mongoose.Schema({
 
@@ -13,10 +15,11 @@ const UserSchema = new mongoose.Schema({
     loggedIn: { type: Boolean, default: false },
 
 
-}, { collection: "users", useCreateIndex: true, timestamps: true })
+}, { timestamps: true })
 
 
 mongoose.models = {}
-export default mongoose.model('User', UserSchema)
+module.exports = db_desiakahaniya.model('User', UserSchema)
+
 
 
