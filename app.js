@@ -13,7 +13,7 @@ const josporn_dbConnect = require('./config/josporn_dbConnect');
 const { getVideoPageData } = require("./config/spangbangScrape/chutlunds_videoPlayer")
 const { getHomePageVideos } = require("./config/spangbangScrape/getHomepageVideos.js")
 const { Translate } = require('@google-cloud/translate').v2;
-
+const { freeSexkahaniStory_details, } = require("./config/scrape/freeSexkahaniStory_details.js");
 const {
   checkStoryExists,
   saveStory,
