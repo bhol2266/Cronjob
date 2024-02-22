@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { checkforLatestStories } = require('./config/DesiKahani_FirestoreUtils.js');
+const { checkforLatestStories,saveSingleStory_AdultDesiKahani_Firestore } = require('./config/DesiKahani_FirestoreUtils.js');
 const { showAppsNotification } = require('./config/AppNotifications');
 const { runDeployhooks } = require('./config/DeployHook');
 const desiKahaniyaRoutes = require('./routes/desikahaniya.js');
@@ -91,6 +91,7 @@ app.post("/storiesDetailsByTitle", async (req, res) => {
         story_href
       );
       await saveStory(newStoryDetails);
+      await saveSingleStory_AdultDesiKahani_Firestore(newStoryDetails);
     }
     return res
       .status(200)

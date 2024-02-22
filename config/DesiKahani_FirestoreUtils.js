@@ -64,8 +64,19 @@ async function checkforLatestStories() {
 
 }
 
+async function saveSingleStory_AdultDesiKahani_Firestore(story_details) {
+    try {
+        await db.collection('storymodels').doc(story_details.Title).set(story_details);
+        await db2.collection('storymodels').doc(story_details.Title).set(story_details);
+    } catch (error) {
+        console.error('Error upload_storymodels_firestore data:', error);
+    }
+}
+
+
 
 
 module.exports = {
-    checkforLatestStories
+    checkforLatestStories,
+    saveSingleStory_AdultDesiKahani_Firestore
 };
