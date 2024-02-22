@@ -34,8 +34,8 @@ async function upload_storymodels_firestore(item) {
 
     try {
         if (story_details.Title != "") {
-            await db.collection('storymodels').doc(story_details.Title).set(item);
-            await db2.collection('storymodels').doc(story_details.Title).set(item);
+            await db.collection('storymodels').doc(story_details.Title).set(story_details);
+            await db2.collection('storymodels').doc(story_details.Title).set(story_details);
         }
 
     } catch (error) {
