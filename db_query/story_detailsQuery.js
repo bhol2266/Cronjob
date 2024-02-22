@@ -20,7 +20,12 @@ exports.checkStoryExists = async function (href) {
 
 exports.saveStory = async function (data) {
     const story = new StoryModel(data)
-    await story.save()
+    try {
+        await story.save()
+    } catch (error) {
+        return null
+
+    }
 }
 
 exports.checkStoryItemExists = async function (Title) {
