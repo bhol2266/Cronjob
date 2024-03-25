@@ -22,6 +22,13 @@ function runDeployhooks() {
       
     });
 
+        axios
+        .get(
+          "https://www.chutlunds.com/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf"
+        ).catch((error) => console.log(error));
+      
+    });
+
     // Deploy hooks cron job running every 3 days
     cron.schedule("0 0 */3 * *", () => {
       console.log(new Date(), "Cronjob Executed");
