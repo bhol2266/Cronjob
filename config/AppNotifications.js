@@ -11,10 +11,10 @@ const { DesiGirls_VideoChat2_Notification } = require("../Apps Notification/Live
 const { DesiGirls_VideoChat3_Notification } = require("../Apps Notification/Live Desi Girls 3/LiveDesi_VideoChat3_Notification.js");
 const { SAXLive_VideoChat_Notification } = require("../Apps Notification/SAX Live/SAXLive_VideoChat_Notification.js");
 
-
+const { ChatMeet_Notification } = require("../Apps Notification/ChatMeet/ChatMeet_Notification.js");
+const { ChatHub_Notification } = require("../Apps Notification/ChatHub/ChatHub_Notification.js");
 
 function showAppsNotification() {
-
 
   // Creating a cron job which runs on every 2days
   try {
@@ -32,7 +32,8 @@ function showAppsNotification() {
         DesiGirls_VideoChat2_Notification();
         DesiGirls_VideoChat3_Notification();
         SAXLive_VideoChat_Notification();
-
+        ChatMeet_Notification();
+        ChatHub_Notification();
 
 
       },
