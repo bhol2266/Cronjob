@@ -6,6 +6,27 @@ const desiKahani_DeployHook =
 const chutlundscom_DeployHook =
 "https://api.render.com/deploy/srv-cm490v21hbls73acc7hg?key=mQhbf6al7u8";
 
+
+function deployFuckVideo(){
+  // cloudflare deployhook only work in post request
+  const apiUrl = 'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/67e02649-ebca-4dd6-b24c-f89fd90c1fcf';
+
+  axios.post(apiUrl, {}, {
+    headers: {
+      'Content-Type': 'application/json',
+      // Add any required headers, such as authentication headers
+      // Example: 'Authorization': 'Bearer YOUR_API_TOKEN'
+    }
+  })
+  .then(response => {
+    console.log('Response:', response.data);
+  })
+  .catch(error => {
+    console.error('Error:', error.response.data);
+  });
+}
+
+
 function runDeployhooks() {
   try {
     // Revalidate cron job running daily at midnight
@@ -15,16 +36,11 @@ function runDeployhooks() {
           "http://desikahaniya.in/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf"
         ).catch((error) => console.log(error));
 
+        deployFuckVideo();
+      
       axios
         .get(
-          "https://www.fuckvideo.live/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf"
-        ).catch((error) => console.log(error));
-      
-    });
-
-        axios
-        .get(
-          "https://www.chutlunds.com/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf"
+          "https://api.render.com/deploy/srv-cm490v21hbls73acc7hg?key=mQhbf6al7u8"
         ).catch((error) => console.log(error));
       
     });
