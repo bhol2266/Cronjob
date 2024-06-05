@@ -1,6 +1,8 @@
-const { admin_Adult_DK, admin_Adult2_DK } = require("../firebase.js")
+const { admin_Adult_DK, admin_Adult2_DK, admin_DesiKahaniOld, admin_Hindi_DK } = require("../firebase.js")
 const db = admin_Adult_DK.firestore();
 const db2 = admin_Adult2_DK.firestore();
+const db3 = admin_DesiKahaniOld.firestore();
+const db4 = admin_Hindi_DK.firestore();
 
 const { freeSexkahani } = require("../config/scrape/freeSexkahani");
 const { freeSexkahaniStory_details } = require("../config/scrape/freeSexkahaniStory_details.js");
@@ -14,6 +16,8 @@ async function upload_storyitemmodels_firestore(item) {
         if (item.Title != "") {
             await db.collection('storyitemmodels').doc(item.Title).set(item);
             await db2.collection('storyitemmodels').doc(item.Title).set(item);
+            await db3.collection('storyitemmodels').doc(item.Title).set(item);
+            await db4.collection('storyitemmodels').doc(item.Title).set(item);
 
             await upload_storymodels_firestore(item);
 
@@ -36,6 +40,8 @@ async function upload_storymodels_firestore(item) {
         if (story_details.Title != "") {
             await db.collection('storymodels').doc(story_details.Title).set(story_details);
             await db2.collection('storymodels').doc(story_details.Title).set(story_details);
+            await db3.collection('storymodels').doc(story_details.Title).set(story_details);
+            await db4.collection('storymodels').doc(story_details.Title).set(story_details);
         }
 
     } catch (error) {
@@ -68,6 +74,8 @@ async function saveSingleStory_AdultDesiKahani_Firestore(story_details) {
     try {
         await db.collection('storymodels').doc(story_details.Title).set(story_details);
         await db2.collection('storymodels').doc(story_details.Title).set(story_details);
+        await db3.collection('storymodels').doc(story_details.Title).set(story_details);
+        await db4.collection('storymodels').doc(story_details.Title).set(story_details);
     } catch (error) {
         console.error('Error upload_storymodels_firestore data:', error);
     }
