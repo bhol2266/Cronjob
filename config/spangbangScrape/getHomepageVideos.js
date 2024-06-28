@@ -24,7 +24,7 @@ exports.getHomePageVideos = async (url) => {
                 const views = statsText.substring(0, statsText.indexOf("%") - 4).trim();
         
                 const previewVideo = select(el).find('picture img').attr('data-preview');
-                const href = `https://spankbang.party${select(el).find('a').attr('href')}`;
+                const href = `https://spankbang.com${$(el).find('a').attr('href')}`;
         
                 if (href !== undefined && previewVideo !== undefined && !thumbnail.includes("//assets.sb-cd.com")) {
                     finalDataArray.push({
