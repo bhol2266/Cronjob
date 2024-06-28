@@ -15,7 +15,7 @@ exports.getHomePageVideos = async (url) => {
             const titles = select('.video-item picture img').map((i, el) => $(el).attr('alt')).get();
             const durations = select('.video-item .l').map((i, el) => $(el).text()).get();
             const previews = select('.video-item picture img').map((i, el) => $(el).attr('data-preview')).get();
-            const hrefs = select('.video-item a').map((i, el) => `https://spankbang.com${$(el).attr('href')}`).get();
+            const hrefs = select('.video-item a').map((i, el) => `https://spankbang.party${$(el).attr('href')}`).get();
             const stats = select('.video-item .stats').map((i, el) => {
                 const text = $(el).text();
                 const likePercentage = text.substring(text.indexOf("%") - 4, text.indexOf("%") + 1).trim();
@@ -29,7 +29,7 @@ exports.getHomePageVideos = async (url) => {
                 duration: durations[index],
                 likedPercent: stats[index]?.likePercentage,
                 views: stats[index]?.views,
-                preview: previews[index],
+                previewVideo: previews[index],
                 href: hrefs[index],
             })).filter(item => item.href && item.preview && !item.thumbnail.includes("//assets.sb-cdate.com"));
 
