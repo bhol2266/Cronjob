@@ -101,16 +101,17 @@ app.post("/storiesDetailsByTitle", async (req, res) => {
   }
 });
 
-app.get("/getHomePageVideos", async (req, res) => {
+app.post("/getHomePageVideos", async (req, res) => {
+  const { href } = req.body;
+
 
   try {
-    const { finalDataArray_Arrar } = await getHomePageVideos("https://spankbang.party/");
+    const { finalDataArray_Arrar } = await getHomePageVideos(href);
 
     return res
       .status(200)
       .json({ success: true, finalDataArray: finalDataArray_Arrar });
   } catch (error) {
-    console.log(error);
     serverError = true
     return res
       .status(200)

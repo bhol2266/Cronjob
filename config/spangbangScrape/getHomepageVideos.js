@@ -1,122 +1,46 @@
 const cheerio = require('cheerio');
 const axios = require('axios');
 
-
-var finalDataArray_Arrar = []
-
+let finalDataArray_Arrar = [];
 
 exports.getHomePageVideos = async (url) => {
+    try {
+        const response = await axios.get(url);
+        const $ = cheerio.load(response.data);
 
-    var finalDataArray = []
-    var thumbnailArray = []
-    var TitleArray = []
-    var durationArray = []
-    var likedPercentArray = []
-    var viewsArray = []
-    var previewVideoArray = []
-    var hrefArray = []
+        $('.videos .video-list.video-rotate').each((i, el) => {
+            const select = cheerio.load(el);
 
-    const response = await axios.get(url)
-    const body = await response.data;
-    const $ = cheerio.load(body)
+            const thumbnails = select('.video-item picture img').map((i, el) => $(el).attr('data-src')).get();
+            const titles = select('.video-item picture img').map((i, el) => $(el).attr('alt')).get();
+            const durations = select('.video-item .l').map((i, el) => $(el).text()).get();
+            const previews = select('.video-item picture img').map((i, el) => $(el).attr('data-preview')).get();
+            const hrefs = select('.video-item a').map((i, el) => `https://spankbang.com${$(el).attr('href')}`).get();
+            const stats = select('.video-item .stats').map((i, el) => {
+                const text = $(el).text();
+                const likePercentage = text.substring(text.indexOf("%") - 4, text.indexOf("%") + 1).trim();
+                const views = text.substring(0, text.indexOf("%") - 4).trim();
+                return { likePercentage, views };
+            }).get();
 
+            const filteredData = thumbnails.map((thumbnail, index) => ({
+                thumbnail,
+                title: titles[index],
+                duration: durations[index],
+                likedPercent: stats[index]?.likePercentage,
+                views: stats[index]?.views,
+                preview: previews[index],
+                href: hrefs[index],
+            })).filter(item => item.href && item.preview && !item.thumbnail.includes("//assets.sb-cdate.com"));
 
+            if (filteredData.length > 2) {
+                finalDataArray_Arrar.push(filteredData);
+            }
+        });
 
-
-
-    $('.videos .video-list.video-rotate').each((i, el) => {
-
-      const select = cheerio.load(el)
-
-      select('.video-item picture img').each((i, el) => {
-
-        const data = $(el).attr("data-src")
-        thumbnailArray.push(data)
-
-
-      })
-
-      select('.video-item picture img').each((i, el) => {
-
-        const data = $(el).attr("alt")
-        TitleArray.push(data)
-
-
-      })
-
-      select('.video-item .l').each((i, el) => {
-
-        const data = $(el).text()
-        durationArray.push(data)
-      })
-
-
-
-      select('.video-item .stats').each((i, el) => {
-
-        const text = $(el).text()
-        const likePercentage = text.substring(text.indexOf("%") - 4, text.indexOf("%") + 1)
-        const views = text.substring(0, text.indexOf("%") - 4)
-
-        likedPercentArray.push(likePercentage.trim())
-        viewsArray.push(views.trim())
-
-      })
-
-
-      select('.video-item picture img').each((i, el) => {
-
-        const data = $(el).attr("data-preview")
-        previewVideoArray.push(data)
-      })
-
-
-
-      select('.video-item a').each((i, el) => {
-
-        const href = $(el).attr('href');
-
-        hrefArray.push(`https://spankbang.com${href}`)
-
-
-      })
-
-
-
-      for (let index = 0; index < thumbnailArray.length; index++) {
-
-        if (hrefArray[index] != undefined && previewVideoArray[index] != undefined && !thumbnailArray[index].includes("//assets.sb-cdate.com")) {
-
-          finalDataArray.push({
-            thumbnailArray: thumbnailArray[index],
-            TitleArray: TitleArray[index],
-            durationArray: durationArray[index],
-            likedPercentArray: likedPercentArray[index],
-            viewsArray: viewsArray[index],
-            previewVideoArray: previewVideoArray[index],
-            hrefArray: hrefArray[index],
-
-          })
-        }
-      }
-
-      if (finalDataArray.length > 2) {
-        finalDataArray_Arrar.push(finalDataArray)
-      }
-
-      thumbnailArray = []
-      TitleArray = []
-      durationArray = []
-      likedPercentArray = []
-      viewsArray = []
-      previewVideoArray = []
-      hrefArray = []
-
-      finalDataArray = []
-    })
-
-
-    return { finalDataArray_Arrar: finalDataArray_Arrar }
-}
-
-
+        return { finalDataArray_Arrar };
+    } catch (error) {
+        console.error("Error fetching the page:", error);
+        return { finalDataArray_Arrar: [] };
+    }
+};
