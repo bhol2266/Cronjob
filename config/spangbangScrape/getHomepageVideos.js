@@ -8,34 +8,40 @@ exports.getHomePageVideos = async (url) => {
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
 
-        $('.videos .video-list.video-rotate').each((i, el) => {
-            const select = cheerio.load(el);
+        $('.video-rotate').each((i, ele) => {
+            const select = cheerio.load(ele);
 
-            const thumbnails = select('.video-item picture img').map((i, el) => $(el).attr('data-src')).get();
-            const titles = select('.video-item picture img').map((i, el) => $(el).attr('alt')).get();
-            const durations = select('.video-item .l').map((i, el) => $(el).text()).get();
-            const previews = select('.video-item picture img').map((i, el) => $(el).attr('data-preview')).get();
-            const hrefs = select('.video-item a').map((i, el) => `https://spankbang.party${$(el).attr('href')}`).get();
-            const stats = select('.video-item .stats').map((i, el) => {
-                const text = $(el).text();
-                const likePercentage = text.substring(text.indexOf("%") - 4, text.indexOf("%") + 1).trim();
-                const views = text.substring(0, text.indexOf("%") - 4).trim();
-                return { likePercentage, views };
-            }).get();
+            let finalDataArray = [];
 
-            const filteredData = thumbnails.map((thumbnail, index) => ({
-                thumbnail,
-                title: titles[index],
-                duration: durations[index],
-                likedPercent: stats[index]?.likePercentage,
-                views: stats[index]?.views,
-                previewVideo: previews[index],
-                href: hrefs[index],
-            })).filter(item => item.href && item.preview && !item.thumbnail.includes("//assets.sb-cdate.com"));
-
-            if (filteredData.length > 2) {
-                finalDataArray_Arrar.push(filteredData);
+            select('.video-item').each((i, el) => {
+        
+                const thumbnail = select(el).find('picture img').attr('data-src');
+                const title = select(el).find('picture img').attr('alt');
+                const duration = select(el).find('.l').text();
+        
+                const statsText = select(el).find('.stats').text();
+                const likePercentage = statsText.substring(statsText.indexOf("%") - 4, statsText.indexOf("%") + 1).trim();
+                const views = statsText.substring(0, statsText.indexOf("%") - 4).trim();
+        
+                const previewVideo = select(el).find('picture img').attr('data-preview');
+                const href = `https://spankbang.party${select(el).find('a').attr('href')}`;
+        
+                if (href !== undefined && previewVideo !== undefined && !thumbnail.includes("//assets.sb-cd.com")) {
+                    finalDataArray.push({
+                        thumbnail: thumbnail,
+                        title: title,
+                        duration: duration,
+                        likePercentage: likePercentage,
+                        views: views,
+                        previewVideo: previewVideo,
+                        href: href,
+                    });
+                }
+            });
+            if (finalDataArray.length > 2) {
+                finalDataArray_Arrar.push(finalDataArray);
             }
+            finalDataArray = [];
         });
 
         return { finalDataArray_Arrar };
