@@ -28,7 +28,7 @@ function deployFuckVideo() {
 
 function deployChutlunds() {
   // cloudflare deployhook only work in post request
-  const apiUrl = 'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/566711ab-35cf-432a-b452-b2bde2feca96';
+  const apiUrl = 'https://api.render.com/deploy/srv-cq6fng2ju9rs73e6jb30?key=FiH19k4Afnk';
 
   axios.post(apiUrl, {}, {
     headers: {
