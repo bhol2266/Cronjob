@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { admin_DesiKahaniNextjs } = require("../firebase.js");
-
+const cheerio = require("cheerio")
 
 const { freeSexkahani } = require("../config/scrape/freeSexkahani");
 const { videoPageData } = require("../config/scrape/videoPageData.js");
@@ -674,6 +674,7 @@ async function updateDB() {
 
 router.post("/fullalbum", async (req, res) => {
 
+    const { href } = req.body;
 
     // Fetch HTML data
     const response = await fetch(`https://www.antarvasnaphotos.com/` + href);
