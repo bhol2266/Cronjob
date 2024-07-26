@@ -13,7 +13,7 @@
   "dependencies": {
     "@google-cloud/translate": "^8.0.2",
     "aws-sdk": "^2.1440.0",
-    "axios": "^1.4.0",
+    "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.2.0",

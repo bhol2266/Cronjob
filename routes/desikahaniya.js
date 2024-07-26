@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { admin_DesiKahaniNextjs } = require("../firebase.js");
 const cheerio = require("cheerio")
+const axios = require('axios'); // CommonJS syntax
+
+
 
 const { freeSexkahani } = require("../config/scrape/freeSexkahani");
 const { videoPageData } = require("../config/scrape/videoPageData.js");
@@ -567,8 +570,8 @@ router.post("/HomepagePics", async (req, res) => {
         const paginationNavPages = [];
 
         // Fetch HTML data
-        const response = await fetch(`https://www.antarvasnaphotos.com/page/${page}`);
-        const body = await response.text();
+        const response = await axios.get(`https://www.antarvasnaphotos.com/page/${page}`);
+        const body = response.data;
         const $ = cheerio.load(body);
 
         // Scrape data from each article
@@ -677,8 +680,8 @@ router.post("/fullalbum", async (req, res) => {
     const { href } = req.body;
 
     // Fetch HTML data
-    const response = await fetch(`https://www.antarvasnaphotos.com/` + href);
-    const body = await response.text();
+    const response = await axios.get(`https://www.antarvasnaphotos.com/` + href);
+    const body = response.data;
     const $ = cheerio.load(body);
 
     const title = $(".entry-title").text();
