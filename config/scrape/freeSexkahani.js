@@ -1,4 +1,3 @@
-const axios = require('axios');
 const cheerio = require('cheerio');
 
 exports.freeSexkahani = async (url) => {
@@ -10,9 +9,9 @@ exports.freeSexkahani = async (url) => {
   var pagination_nav_pages = []
 
 
-  const response = await axios.get(url)
-  const body = await response.data;
-  const $$ = cheerio.load(body)
+  const response = await fetch(url)
+  const html = await response.text();
+  const $$ = cheerio.load(html);
 
 
 

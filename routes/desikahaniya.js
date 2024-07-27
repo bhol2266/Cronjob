@@ -573,8 +573,7 @@ router.post("/HomepagePics", async (req, res) => {
         const response = await fetch(`https://www.antarvasnaphotos.com/page/${page}`);
         const html = await response.text();
         const $ = cheerio.load(html);
-        console.log(`https://www.antarvasnaphotos.com/page/${page}`);
-        console.log(html);
+    
         // Scrape data from each article
         $('.inside-article').each((index, element) => {
             const title = $(element).find('.entry-title a').text();

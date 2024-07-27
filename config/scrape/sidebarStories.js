@@ -1,5 +1,4 @@
 const cheerio = require('cheerio');
-const fetchdata = require('node-fetch');
 
 
 
@@ -24,9 +23,9 @@ const sidebarStories = async (url) => {
     var hrefArray2 = []
 
 
-    const response = await fetchdata(url)
-    const body = await response.text();
-    const $ = cheerio.load(body)
+    const response = await fetch(url)
+  const html = await response.text();
+  const $ = cheerio.load(html);
 
 
 

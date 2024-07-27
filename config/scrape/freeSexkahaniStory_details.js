@@ -1,4 +1,3 @@
-const axios = require('axios');
 const cheerio = require('cheerio');
 
 exports.freeSexkahaniStory_details = async (url, story) => {
@@ -16,12 +15,10 @@ exports.freeSexkahaniStory_details = async (url, story) => {
     var tagsArray = []
 
 
-    const response = await axios.get(url)
-    const body = await response.data;
-    const $ = cheerio.load(body)
-
-
-
+    const response = await fetch(url)
+    const html = await response.text();
+    const $ = cheerio.load(html);
+  
 
 
     $('.entry-title').each((i, el) => {
