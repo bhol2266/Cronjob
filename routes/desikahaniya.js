@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { admin_DesiKahaniNextjs } = require("../firebase.js");
 const cheerio = require("cheerio")
-const axios = require('axios'); // CommonJS syntax
 
 
 
@@ -570,10 +569,12 @@ router.post("/HomepagePics", async (req, res) => {
         const paginationNavPages = [];
 
         // Fetch HTML data
-        const response = await axios.get(`https://www.antarvasnaphotos.com/page/${page}`);
-        const body = response.data;
-        const $ = cheerio.load(body);
 
+        const response = await fetch(`https://www.antarvasnaphotos.com/page/${page}`);
+        const html = await response.text();
+        const $ = cheerio.load(html);
+        console.log(`https://www.antarvasnaphotos.com/page/${page}`);
+        console.log(html);
         // Scrape data from each article
         $('.inside-article').each((index, element) => {
             const title = $(element).find('.entry-title a').text();
@@ -680,9 +681,12 @@ router.post("/fullalbum", async (req, res) => {
     const { href } = req.body;
 
     // Fetch HTML data
-    const response = await axios.get(`https://www.antarvasnaphotos.com/` + href);
-    const body = response.data;
-    const $ = cheerio.load(body);
+
+    const response = await fetch(`https://www.antarvasnaphotos.com/` + href);
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+
 
     const title = $(".entry-title").text();
     const thumbnail = $(".featured-image .page-header-image-single img").attr('src');
