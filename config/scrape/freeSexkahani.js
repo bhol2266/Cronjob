@@ -1,112 +1,82 @@
+const axios = require('axios');
 const cheerio = require('cheerio');
 
-exports.freeSexkahani = async (url) => {
+ const freeSexkahani = async (url) => {
+  let finalDataArray = [];
+  let categoryTitle = '';
+  let categoryDescription = '';
+  let pagination_nav_pages = [];
 
-
-  var finalDataArray = []
-  var categoryTitle = ''
-  var categoryDescription = ''
-  var pagination_nav_pages = []
-
-
-  const response = await fetch(url)
-  const html = await response.text();
+  const response = await axios.get(url);
+  const html = response.data;
   const $$ = cheerio.load(html);
 
-
-
   $$('article').each((i, el) => {
+    let Title = '';
+    let author = {};
+    let date = {};
+    let completeDate = '';
+    let views = '';
+    let description = '';
+    let href = '';
+    let tags = [];
+    let authorName = '';
+    let authorHref = '';
+    let category = '';
 
-
-    var Title = ""
-    var author = {}
-    var date = {}
-    var completeDate = ''
-    var views = ""
-    var description = ""
-    var href = ""
-    var tags = []
-    var authorName = ""
-    var authorHref = ""
-    var category = ""
-
-    const $ = cheerio.load(el)
+    const $ = cheerio.load(el);
 
     $('.entry-title a').each((i, el) => {
+      Title = $(el).text();
+      href = $(el).attr('href');
+    });
 
-      Title = $(el).text()
-      href = $(el).attr("href")
-
-    })
     $('.cat-links a').each((i, el) => {
-
-      category = $(el).text()
-
-    })
-
-    //Author name and link
+      category = $(el).text();
+    });
 
     $('.author-name').each((i, el) => {
-      const data = $(el).text()
-      authorName = data
-
-    })
+      authorName = $(el).text();
+    });
 
     $('.url.fn.n').each((i, el) => {
-      const data = $(el).attr('href')
-      authorHref = data
-    })
+      authorHref = $(el).attr('href');
+    });
 
-    author = { name: authorName, href: authorHref.substring(authorHref.indexOf("author/") + 7, authorHref.length).replace("/", "").replace("/", "").replace("/", "") }
-
-
+    author = {
+      name: authorName,
+      href: authorHref
+        ? authorHref.substring(authorHref.indexOf('author/') + 7).replace(/\//g, '')
+        : '',
+    };
 
     $('.posted-on time').each((i, el) => {
-
-      const data = $(el).text()
+      const data = $(el).text();
       date = {
         day: data.substring(0, 2),
         month: data.substring(3, 5),
-        year: data.substring(6, data.length),
-      }
+        year: data.substring(6),
+      };
 
-      const year = data.substring(6, data.length)
-      const month = data.substring(3, 5)
-      const day = data.substring(0, 2)
-      completeDate = parseInt(year + month + day)
-
-    })
-
+      completeDate = parseInt(data.substring(6) + data.substring(3, 5) + data.substring(0, 2));
+    });
 
     $('.post-views-eye').each((i, el) => {
+      views = $(el).text();
+    });
 
-      const data = $(el).text()
-      views = data
-
-    })
     $('.entry-content p:nth-child(1)').each((i, el) => {
+      description = $(el).text();
+    });
 
-      const data = $(el).text()
-      description = data
-
-    })
     $('.tags-links').each((i, el) => {
-
-      var array = []
-
-      const select = cheerio.load(el)
+      const array = [];
+      const select = cheerio.load(el);
       select('a').each((i, el) => {
-        const data = $(el).text()
-        const href = $(el).attr('href')
-        array.push({ name: data, href: href })
-
-      })
-      tags = array
-
-    })
-
-
-
+        array.push({ name: $(el).text(), href: $(el).attr('href') });
+      });
+      tags = array;
+    });
 
     finalDataArray.push({
       Title: Title,
@@ -115,51 +85,32 @@ exports.freeSexkahani = async (url) => {
       views: views,
       completeDate: completeDate,
       category: category,
-      description: description ? description : "",
+      description: description || '',
       href: href,
       tags: tags,
-
-    })
-
-
-
-
-
-  })
-
+    });
+  });
 
   $$('.page-title').each((i, el) => {
-
-    const data = $$(el).text()
-    categoryTitle = data
-
-  })
+    categoryTitle = $$(el).text();
+  });
 
   $$('.taxonomy-description  p').each((i, el) => {
-    const data = $$(el).text()
-    if (categoryDescription.length === 0) {
-      categoryDescription = data
-    } else {
-      categoryDescription = categoryDescription + "\n" + "\n" + "\n" + data
-    }
-  })
-
+    const data = $$(el).text();
+    categoryDescription = categoryDescription
+      ? `${categoryDescription}\n\n\n${data}`
+      : data;
+  });
 
   $$('.nav-links').children().each((i, el) => {
-
-    const data = $$(el).text()
-    pagination_nav_pages.push(data)
-  })
-
-
-
-
+    pagination_nav_pages.push($$(el).text());
+  });
 
   return {
     finalDataArray: finalDataArray,
     categoryTitle: categoryTitle,
     categoryDescription: categoryDescription,
-    pagination_nav_pages: pagination_nav_pages
-  }
-
-}
+    pagination_nav_pages: pagination_nav_pages,
+  };
+};
+module.exports = { freeSexkahani };

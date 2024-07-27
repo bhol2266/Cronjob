@@ -560,73 +560,7 @@ router.post("/videoPageData", async (req, res) => {
     });
 });
 
-router.post("/HomepagePics", async (req, res) => {
-    const { page } = req.body;
 
-    try {
-
-        const finalDataArray = [];
-        const paginationNavPages = [];
-
-        // Fetch HTML data
-
-        const response = await fetch(`https://www.antarvasnaphotos.com/page/${page}`);
-        const html = await response.text();
-        const $ = cheerio.load(html);
-    
-        // Scrape data from each article
-        $('.inside-article').each((index, element) => {
-            const title = $(element).find('.entry-title a').text();
-            const fullalbum_href = $(element).find('.entry-title a').attr('href');
-
-            // Extract the second URL from the srcset attribute
-            const srcset = $(element).find('.post-image img').attr('srcset');
-            let thumbnail = '';
-            if (srcset) {
-                const srcsetArray = srcset.split(', ');
-                if (srcsetArray.length > 1) {
-                    thumbnail = srcsetArray[1].split(' ')[0]; // Get the URL part of the second entry
-                }
-            } else {
-                thumbnail = $(element).find('.post-image img').attr('src'); // Fallback to src if srcset is not available
-            }
-
-            const category = $(element).find('.cat-links a').text();
-            const category_href = $(element).find('.cat-links a').attr('href');
-
-            finalDataArray.push({
-                title,
-                fullalbum_href,
-                thumbnail,
-                category,
-                category_href
-            });
-        });
-
-        // Get pagination data
-        const firstPage = $('.nav-links .page-numbers.current').text().trim();
-        if (firstPage) {
-            paginationNavPages.push(firstPage.replace("Page", ""));
-        }
-
-        const lastPage = $('.nav-links .page-numbers').not('.current').last().prev().text().trim();
-        if (lastPage) {
-            paginationNavPages.push(lastPage.replace("Page", ""));
-        }
-
-
-        return res.status(200).json({
-            success: true,
-            data: {
-                finalDataArray,
-                paginationNavPages
-            }
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(200).json({ success: false, message: error });
-    }
-});
 
 async function updateDB() {
     const PicModel = require("../models/PicItemModel.js"); //homepage story item
@@ -675,67 +609,7 @@ async function updateDB() {
 
 // updateDB();
 
-router.post("/fullalbum", async (req, res) => {
 
-    const { href } = req.body;
-
-    // Fetch HTML data
-
-    const response = await fetch(`https://www.antarvasnaphotos.com/` + href);
-    const html = await response.text();
-    const $ = cheerio.load(html);
-
-
-
-    const title = $(".entry-title").text();
-    const thumbnail = $(".featured-image .page-header-image-single img").attr('src');
-    const date = $('.entry-meta .posted-on time').text();
-    const author = $('.entry-meta .author .author-name').text();
-    const uploaded_by = `${date} by ${author}`;
-
-    const description = $('.entry-content p').first().text();
-
-    const imageArray = [];
-    $('.entry-content p a').each((i, el) => {
-        const href = $(el).attr('href');
-        if (href && href.includes("https://www.antarvasnaphotos.com")) {
-            imageArray.push(href);
-        }
-    });
-
-    const relatedAlbums = [];
-    $('.yarpp-related-widget ul li').each((index, element) => {
-        const albumTitle = $(element).find('p').text();
-        const fullalbum_href = $(element).find('a').attr('href');
-        const albumThumbnail = $(element).find('img').attr('src');
-
-        relatedAlbums.push({
-            title: albumTitle,
-            fullalbum_href: fullalbum_href,
-            thumbnail: albumThumbnail,
-            category: "",
-            category_href: ""
-        });
-    });
-
-
-
-    if (imageArray.length == 0) {
-        return res.status(200).json({ success: false, message: "server error" });
-    } else {
-        return res.status(200).json({
-            success: true,
-            data: {
-                title: title,
-                thumbnail: thumbnail,
-                description: description,
-                uploaded_by: uploaded_by,
-                imageArray: imageArray,
-                relatedAlbums: relatedAlbums
-            }
-        });
-    }
-});
 
 
 router.post("/publishStory", async (req, res) => {
