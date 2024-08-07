@@ -4,7 +4,7 @@ const cron = require('node-cron');
 const desiKahani_DeployHook =
   "https://api.vercel.com/v1/integrations/deploy/prj_lh3yPimt3Q7HwFlod7d23pJhYGh1/2jtbPzoURw";
 const chutlundscom_DeployHook =
-  "https://api.render.com/deploy/srv-cm490v21hbls73acc7hg?key=mQhbf6al7u8";
+  "https://api.render.com/deploy/srv-cqm7899u0jms73fmnro0?key=P3rdc1kT1FE";
 
 
 function deployFuckVideo() {
@@ -28,9 +28,7 @@ function deployFuckVideo() {
 
 function deployChutlunds() {
   // cloudflare deployhook only work in post request
-  const apiUrl = 'https://api.render.com/deploy/srv-cq6fng2ju9rs73e6jb30?key=FiH19k4Afnk';
-
-  axios.post(apiUrl, {}, {
+  axios.post(chutlundscom_DeployHook, {}, {
     headers: {
       'Content-Type': 'application/json',
       // Add any required headers, such as authentication headers
