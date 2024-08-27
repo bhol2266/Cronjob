@@ -8,31 +8,29 @@ const chutlundscom_DeployHook =
 const fuckvideolive_DeployHook =
   "https://api.render.com/deploy/srv-cr619ujv2p9s73akvfv0?key=JpyMY4gvTvQ";
 
-function runDeployhooks() {
+async function triggerDeployHook(url) {
   try {
-    // Revalidate cron job running daily at midnight
-    cron.schedule("0 0 * * *", async () => {
-      await fetch(desiKahani_DeployHook)
-      await fetch(fuckvideolive_DeployHook)
-      await fetch(chutlundscom_DeployHook)
-
-    });
-
-
-    cron.schedule('0 12 * * *', async () => {
-
-      await fetch(fuckvideolive_DeployHook)
-      await fetch(chutlundscom_DeployHook)
-      await fetch(desiKahani_DeployHook)
-
-    });
-
-
-
-
+    await axios.post(url);
+    console.log(`Successfully triggered deploy hook: ${url}`);
   } catch (error) {
-    console.error(error);
+    console.error(`Error triggering deploy hook: ${url}`, error.message);
   }
+}
+
+function runDeployhooks() {
+  // Revalidate cron job running daily at midnight
+  cron.schedule("0 0 * * *", async () => {
+    await triggerDeployHook(desiKahani_DeployHook);
+    await triggerDeployHook(fuckvideolive_DeployHook);
+    await triggerDeployHook(chutlundscom_DeployHook);
+  });
+
+  // Another cron job running daily at noon
+  cron.schedule('0 12 * * *', async () => {
+    await triggerDeployHook(fuckvideolive_DeployHook);
+    await triggerDeployHook(chutlundscom_DeployHook);
+    await triggerDeployHook(desiKahani_DeployHook);
+  });
 }
 
 module.exports = { runDeployhooks };
