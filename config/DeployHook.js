@@ -3,7 +3,7 @@ const cron = require('node-cron');
 
 const desiKahani_DeployHook = "https://www.hindisexstory.app/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf";
 const chutlundscom_DeployHook = "https://api.render.com/deploy/srv-cqm7899u0jms73fmnro0?key=P3rdc1kT1FE";
-const fuckvideolive_DeployHook = "https://api.render.com/deploy/srv-cr619ujv2p9s73akvfv0?key=JpyMY4gvTvQ";
+const fuckvideolive_DeployHook = "https://api.render.com/deploy/srv-cr6mgq2j1k6c73d6pspg?key=CdttnW4ywQs";
 
 async function triggerDeployHook(url) {
   try {
