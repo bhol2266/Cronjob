@@ -553,6 +553,8 @@ router.post("/getTagVideos", async (req, res) => {
 router.post("/videoPageData", async (req, res) => {
     const { id } = req.body;
 
+    const db = admin_DesiKahaniNextjs.firestore();
+
 
     async function getDocumentById(id) {
         try {
