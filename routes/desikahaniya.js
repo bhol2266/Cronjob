@@ -451,45 +451,47 @@ router.get("/latestStories", async (req, res) => {
 
 
 
-router.post("/HomepageVideo", async (req, res) => {
+router.post("/getHomepageVideos", async (req, res) => {
+
+
     const { page } = req.body;
-    let categoryDescription = "";
-    let categoryTitle = "";
-    let pagination_nav_pages = [];
-    let finalDataArray_final = [];
-    pagination_nav_pages.push(page);
+    const pageNumber = parseInt(page);
+    const pageSize = 60;
+    const skip = (pageNumber - 1) * pageSize;
 
     try {
-        if (page === "1") {
-            const { finalDataArray, categoryTitle, categoryDescription } =
-                await freeSexkahaniVideo(
-                    `https://www.freesexkahani.com/videos/page/1/`
-                );
-            finalDataArray.forEach(async (item) => {
-                let obj = await checkVideoItemExists(item.href);
-                if (obj == null) {
-                    await saveVideoItem(item);
-                }
-            });
+        const db = admin_DesiKahaniNextjs.firestore();
+
+
+        let query = db.collection('Desi_Porn_Videos')
+            .where('uploaded', '==', true)
+            .orderBy('timestamp', 'desc')
+            .offset(skip)
+            .limit(pageSize);
+
+        const snapshot = await query.get();
+
+
+        const videos = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        async function getTotalDocumentCount() {
+            const snapshot = await db.collection('Desi_Porn_Videos')
+                .where('uploaded', '==', true)
+                .get();
+
+            return snapshot.size; // Returns the number of documents
         }
 
-        let count = await VIDEOITEMS_DB_COUNT();
 
-        let lastPage = Math.round(count / 12);
-        pagination_nav_pages.push(lastPage.toString());
+        const totalDocuments = await getTotalDocumentCount();
+        const totalPages = Math.ceil(totalDocuments / pageSize);
+        const pagination_nav_pages = ["1", totalPages.toString()]
 
-        finalDataArray_final = await getVideoItemByPage(page);
 
-        return res.status(200).json({
-            success: true,
-            data: {
-                count: count,
-                finalDataArray: finalDataArray_final,
-                pagination_nav_pages: pagination_nav_pages,
-                categoryDescription: categoryDescription,
-                categoryTitle: categoryTitle,
-            },
-        });
+        return res.status(200).json({ videos, pagination_nav_pages });
     } catch (error) {
         console.log(error);
         return res.status(200).json({ success: false, message: error });
