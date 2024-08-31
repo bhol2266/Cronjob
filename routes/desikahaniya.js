@@ -166,6 +166,11 @@ const categories = [
     },
 ];
 
+function formatTag(input) {
+    // Replace hyphens with spaces
+    let replacedString = input.replaceAll('-', ' ');
+    return replacedString;
+}
 
 const {
     freeSexkahaniStory_details,
@@ -498,36 +503,47 @@ router.post("/getHomepageVideos", async (req, res) => {
     }
 });
 
-router.post("/VideoByTag", async (req, res) => {
-    const { tag, page } = req.body;
-    let categoryDescription = "";
-    let categoryTitle = tag.replace("-", " ").replace("-", " ").toUpperCase();
+router.post("/getTagVideos", async (req, res) => {
 
-    let pagination_nav_pages = [];
-    let finalDataArray_final = [];
-    pagination_nav_pages.push(page);
+    const { tag, page } = req.body;
+    const pageNumber = parseInt(page, 10);
+    const pageSize = 60;
+    const skip = (pageNumber - 1) * pageSize;
 
     try {
-        const query = {
-            "tags.href": tag,
-        };
+        const db = admin_DesiKahaniNextjs.firestore();
 
-        let count = await getVideoItems_DB_COUNT_TAGS(query);
-        let lastPage = Math.round(count / 12);
-        pagination_nav_pages.push(lastPage.toString());
 
-        finalDataArray_final = await getVideoItemsByTag(query, page);
+        let query = db.collection('Desi_Porn_Videos')
+            .where('uploaded', '==', true)
+            .where('tags', 'array-contains', formatTag(tag))
+            .orderBy('timestamp', 'desc')
+            .offset(skip)
+            .limit(pageSize);
 
-        return res.status(200).json({
-            success: true,
-            data: {
-                count: count,
-                finalDataArray: finalDataArray_final,
-                pagination_nav_pages: pagination_nav_pages,
-                categoryDescription: categoryDescription,
-                categoryTitle: categoryTitle,
-            },
-        });
+
+        const snapshot = await query.get();
+
+        const videos = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        async function getTotalDocumentCount(tag) {
+            const snapshot = await db.collection('Desi_Porn_Videos')
+                .where('uploaded', '==', true)
+                .where('tags', 'array-contains', formatTag(tag))
+                .get();
+
+            return snapshot.size; // Returns the number of documents
+        }
+
+        const totalDocuments = await getTotalDocumentCount(tag);
+        const totalPages = Math.ceil(totalDocuments / pageSize);
+        const pagination_nav_pages = ["1", totalPages.toString()]
+
+
+        return res.status(200).json({ videos, pagination_nav_pages });
     } catch (error) {
         console.log(error);
         return res.status(200).json({ success: false, message: error });
@@ -535,31 +551,63 @@ router.post("/VideoByTag", async (req, res) => {
 });
 
 router.post("/videoPageData", async (req, res) => {
-    const { video } = req.body;
-    let story_details = {};
-    let finalDataArray_final = [];
+    const { id } = req.body;
+
+
+    async function getDocumentById(id) {
+        try {
+            const docRef = db.collection('Desi_Porn_Videos').doc(id);
+            const doc = await docRef.get();
+
+            if (!doc.exists) {
+                throw new Error('Document not found');
+            }
+
+            return { id: doc.id, ...doc.data() };
+        } catch (error) {
+            console.error('Error fetching document:', error);
+            throw error;
+        }
+    }
+
+    async function getRelatedVideos(tags) {
+        try {
+            // Fetch videos with any of the tags
+            const videosSnapshot = await db.collection('Desi_Porn_Videos')
+                .where('tags', 'array-contains-any', tags)
+                .get();
+
+            const videos = videosSnapshot.docs.map(doc => {
+                const data = doc.data();
+                const videoTags = data.tags || [];
+                const matchCount = tags.filter(tag => videoTags.includes(tag)).length;
+                return { id: doc.id, ...data, matchCount };
+            });
+
+            // Sort videos by the number of matching tags in descending order
+            const sortedVideos = videos.sort((a, b) => b.matchCount - a.matchCount);
+            const limitedVideos = sortedVideos.slice(0, 60);
+            return limitedVideos;
+
+        } catch (error) {
+            console.error('Error fetching document:', error);
+            throw error;
+        }
+    }
 
     try {
-        story_details = await checkVideoExists(video);
-        if (story_details == null) {
-            story_details = await videoPageData(
-                `https://www.freesexkahani.com/videos/${video}/`,
-                video
-            );
-            await saveVideo(story_details);
-        }
 
-        finalDataArray_final = await randomVideolist();
+        let document = await getDocumentById(id);
+        document.videoSrc = `https://pub-46cdeefeaf774247ab99232ab1ebaa66.r2.dev/DesiPornVideos/FullVideo/${document.id}.mp4`;
+        const relatetdVideos = await getRelatedVideos(document.tags);
+
+        return res.status(200).json({ video_details: document, relatetdVideos: relatetdVideos });
+
     } catch (error) {
         console.log(error);
         return res.status(200).json({ success: false, message: error });
     }
 
-    return res.status(200).json({
-        success: true,
-        story_details: story_details,
-        finalDataArray: finalDataArray_final,
-    });
 });
 
 
