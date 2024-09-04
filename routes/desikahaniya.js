@@ -553,6 +553,7 @@ router.post("/getTagVideos", async (req, res) => {
 router.post("/videoPageData", async (req, res) => {
     const { id } = req.body;
 
+
     const db = admin_DesiKahaniNextjs.firestore();
 
 
@@ -573,11 +574,23 @@ router.post("/videoPageData", async (req, res) => {
     }
 
     async function getRelatedVideos(tags) {
+
+
+        function getRandomElement(arr) {
+            if (arr.length === 0) {
+                return undefined; // or handle empty array case as needed
+            }
+            const randomIndex = Math.floor(Math.random() * arr.length);
+            return arr[randomIndex];
+        }
+
         try {
-            // Fetch videos with any of the tags
-            const videosSnapshot = await db.collection('Desi_Porn_Videos')
-                .where('tags', 'array-contains-any', tags)
-                .get();
+            let query = db.collection('Desi_Porn_Videos')
+                .where('tags', 'array-contains', getRandomElement(tags))
+                .orderBy('timestamp', 'desc');
+
+            const videosSnapshot = await query.limit(60).get();
+
 
             const videos = videosSnapshot.docs.map(doc => {
                 const data = doc.data();
@@ -585,6 +598,7 @@ router.post("/videoPageData", async (req, res) => {
                 const matchCount = tags.filter(tag => videoTags.includes(tag)).length;
                 return { id: doc.id, ...data, matchCount };
             });
+
 
             // Sort videos by the number of matching tags in descending order
             const sortedVideos = videos.sort((a, b) => b.matchCount - a.matchCount);
