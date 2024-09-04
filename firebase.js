@@ -33,7 +33,9 @@ const hindi_desi_kahani = {
 
 const desiKahaniNextjs = {
     credential: admin.credential.cert(serviceAccount_DesiKahaniNextjs),
-    storageBucket: 'gs://desikahaninextjs-ffab3.appspot.com'
+    storageBucket: 'gs://desikahaninextjs-ffab3.appspot.com',
+    databaseURL: 'https://desikahaninextjs-ffab3-default-rtdb.asia-southeast1.firebasedatabase.app/',
+
 
 };
 

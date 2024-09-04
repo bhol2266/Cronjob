@@ -1,36 +1,42 @@
-const { admin_Adult2_DK, admin_DesiKahaniOld, admin_Hindi_DK } = require('./firebase');
+const { admin_DesiKahaniNextjs } = require("./firebase.js");
 
-const db_source = admin_Adult2_DK.firestore();
-const db_destination_desiKahaniOld = admin_DesiKahaniOld.firestore();
-const db_destination_hindi_desiKahani = admin_Hindi_DK.firestore();
+const db = admin_DesiKahaniNextjs.firestore();
+const realtimeDb = admin_DesiKahaniNextjs.database(); // Initialize the Realtime Database
 
-async function copyCollection(sourceCollectionPath, destinationCollections) {
-  const collectionRef = db_source.collection(sourceCollectionPath);
-  const snapshot = await collectionRef.get();
+async function getTotalDocumentCount_TAG(tag) {
+  const snapshot = await db.collection('Desi_Porn_Videos')
+    .where('uploaded', '==', true)
+    .where('tags', 'array-contains', tag)
+    .get();
 
-  if (snapshot.empty) {
-    console.log(`No documents found in collection: ${sourceCollectionPath}`);
-    return;
-  }
-
-  for (const doc of snapshot.docs) {
-    const data = doc.data();
-    for (const db_destination of destinationCollections) {
-      await db_destination.collection(sourceCollectionPath).doc(doc.id).set(data);
-      console.log(`Document ${doc.id} copied from ${sourceCollectionPath} to ${db_destination.projectId}`);
-    }
-  }
+  return snapshot.size; // Returns the number of documents
 }
 
-async function copySelectedCollections() {
-  const collectionsToCopy = ['collection1', 'collection2']; // Replace with the actual collection names you want to copy
-  const destinationDbs = [db_destination_desiKahaniOld, db_destination_hindi_desiKahani];
+async function getTotalDocumentCount() {
+  const snapshot = await db.collection('Desi_Porn_Videos')
+    .where('uploaded', '==', true)
+    .get();
 
-  for (const collectionName of collectionsToCopy) {
-    await copyCollection(collectionName, destinationDbs);
-  }
-
-  console.log('Selected collections copied successfully.');
+  return snapshot.size; // Returns the number of documents
 }
 
-copySelectedCollections().catch(console.error);
+async function runCode() {
+  let CategoriesObject = {};
+
+  const data = require('./Categories.json');
+
+  for (let index = 0; index < data.length; index++) {
+    const element = data[index];
+    const count = await getTotalDocumentCount_TAG(element.category);
+    CategoriesObject[element.category] = String(count);
+    console.log(CategoriesObject);
+
+  }
+
+  let totalVideos = await getTotalDocumentCount();
+
+  await realtimeDb.ref('CategoriesVideoCount').set(CategoriesObject);
+  await realtimeDb.ref('TotalVideos').set(String(totalVideos));
+}
+
+runCode();

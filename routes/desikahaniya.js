@@ -466,7 +466,7 @@ router.post("/getHomepageVideos", async (req, res) => {
 
     try {
         const db = admin_DesiKahaniNextjs.firestore();
-
+        const realtimeDb = admin_DesiKahaniNextjs.database(); // Initialize the Realtime Database
 
         let query = db.collection('Desi_Porn_Videos')
             .where('uploaded', '==', true)
@@ -483,12 +483,17 @@ router.post("/getHomepageVideos", async (req, res) => {
         }));
 
         async function getTotalDocumentCount() {
-            const snapshot = await db.collection('Desi_Porn_Videos')
-                .where('uploaded', '==', true)
-                .get();
+            try {
+                const totalVideosRef = realtimeDb.ref('TotalVideos');
+                const snapshot = await totalVideosRef.once('value');
+                const totalVideos = snapshot.val();
 
-            return snapshot.size; // Returns the number of documents
+                return String(totalVideos)
+            } catch (error) {
+                console.error('Error fetching the field:', error);
+            }
         }
+
 
 
         const totalDocuments = await getTotalDocumentCount();
@@ -512,6 +517,8 @@ router.post("/getTagVideos", async (req, res) => {
 
     try {
         const db = admin_DesiKahaniNextjs.firestore();
+        const realtimeDb = admin_DesiKahaniNextjs.database(); // Initialize the Realtime Database
+
 
 
         let query = db.collection('Desi_Porn_Videos')
@@ -524,21 +531,24 @@ router.post("/getTagVideos", async (req, res) => {
 
         const snapshot = await query.get();
 
+
+
         const videos = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
 
         async function getTotalDocumentCount(tag) {
-            const snapshot = await db.collection('Desi_Porn_Videos')
-                .where('uploaded', '==', true)
-                .where('tags', 'array-contains', formatTag(tag))
-                .get();
-
-            return snapshot.size; // Returns the number of documents
+            try {
+                const snapshot = await realtimeDb.ref(`CategoriesVideoCount/${tag}`).once('value');
+                const count = snapshot.val();
+                return String(count)
+            } catch (error) {
+                console.error('Error fetching the field:', error);
+            }
         }
 
-        const totalDocuments = await getTotalDocumentCount(tag);
+        const totalDocuments = await getTotalDocumentCount(formatTag(tag));
         const totalPages = Math.ceil(totalDocuments / pageSize);
         const pagination_nav_pages = ["1", totalPages.toString()]
 
