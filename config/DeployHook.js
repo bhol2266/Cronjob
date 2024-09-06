@@ -2,8 +2,8 @@ const axios = require('axios');
 const cron = require('node-cron');
 
 const desiKahani_DeployHook = "https://www.hindisexstory.app/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf";
-const chutlundscom_DeployHook = "https://api.render.com/deploy/srv-cqm7899u0jms73fmnro0?key=P3rdc1kT1FE";
-const fuckvideolive_DeployHook = "https://api.render.com/deploy/srv-cr6mgq2j1k6c73d6pspg?key=CdttnW4ywQs";
+const chutlundscom_DeployHook = "https://api.render.com/deploy/srv-crcu37qj1k6c73ctlgtg?key=W_PBJ6O13Os";
+const fuckvideolive_DeployHook = "https://api.render.com/deploy/srv-crcu4daj1k6c73ctm5jg?key=GqvM7w053J4";
 
 async function triggerDeployHook(url) {
   try {
