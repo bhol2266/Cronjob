@@ -186,6 +186,7 @@ const {
     randomPiclist,
 } = require("../db_query/PicsQuery");
 const tagJSON = require("../JsonData/TagsDetail.json");
+const { getTotalDocumentCountFunc, queryBuilder, getTotalDocumentCountFuncQuery } = require('../Utils/desikahaniya.js');
 
 
 
@@ -466,10 +467,9 @@ router.post("/getHomepageVideos", async (req, res) => {
 
     try {
         const db = admin_DesiKahaniNextjs.firestore();
-        const realtimeDb = admin_DesiKahaniNextjs.database(); // Initialize the Realtime Database
 
         let query = db.collection('Desi_Porn_Videos')
-            .where('uploaded', '==', true)
+            .where('publish', '==', true)
             .orderBy('timestamp', 'desc')
             .offset(skip)
             .limit(pageSize);
@@ -482,24 +482,47 @@ router.post("/getHomepageVideos", async (req, res) => {
             ...doc.data()
         }));
 
-        async function getTotalDocumentCount() {
-            try {
-                const totalVideosRef = realtimeDb.ref('TotalVideos');
-                const snapshot = await totalVideosRef.once('value');
-                const totalVideos = snapshot.val();
 
-                return String(totalVideos)
-            } catch (error) {
-                console.error('Error fetching the field:', error);
-            }
-        }
-
-
-
-        const totalDocuments = await getTotalDocumentCount();
+        const totalDocuments = await getTotalDocumentCountFunc();
         const totalPages = Math.ceil(totalDocuments / pageSize);
         const pagination_nav_pages = ["1", totalPages.toString()]
 
+
+        return res.status(200).json({ videos, pagination_nav_pages });
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error });
+    }
+});
+
+router.post("/getQueryVideos", async (req, res) => {
+
+
+    const { page, sort, duration } = req.body;
+
+
+    const pageNumber = parseInt(page);
+    const pageSize = 60;
+
+    try {
+
+        const { paginatedQuery } = await queryBuilder({ sort, duration, pageNumber, pageSize });
+        const snapshot = await paginatedQuery.get();
+
+        const videos = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+
+        let totalDocuments = 0
+        if (duration != "all") {
+            totalDocuments = await getTotalDocumentCountFuncQuery(sort, duration)
+        } else {
+            totalDocuments = await getTotalDocumentCountFunc()
+        }
+        const totalPages = Math.ceil(totalDocuments / pageSize);
+        const pagination_nav_pages = ["1", totalPages.toString()]
 
         return res.status(200).json({ videos, pagination_nav_pages });
     } catch (error) {
@@ -522,7 +545,7 @@ router.post("/getTagVideos", async (req, res) => {
 
 
         let query = db.collection('Desi_Porn_Videos')
-            .where('uploaded', '==', true)
+            .where('publish', '==', true)
             .where('tags', 'array-contains', formatTag(tag))
             .orderBy('timestamp', 'desc')
             .offset(skip)
