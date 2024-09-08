@@ -117,11 +117,52 @@ async function getTotalDocumentCountFuncQuery(sort, duration) {
 }
 
 
+async function getRelatedVideos(tags) {
+
+
+    function getRandomElement(arr) {
+        if (arr.length === 0) {
+            return undefined; // or handle empty array case as needed
+        }
+        const randomIndex = Math.floor(Math.random() * arr.length);
+        return arr[randomIndex];
+    }
+
+    try {
+        let query = db.collection('Desi_Porn_Videos')
+            .where('publish', '==', true)
+            .where('tags', 'array-contains', getRandomElement(tags))
+            .orderBy('timestamp', 'desc');
+
+        const videosSnapshot = await query.limit(60).get();
+
+
+        const videos = videosSnapshot.docs.map(doc => {
+            const data = doc.data();
+            const videoTags = data.tags || [];
+            const matchCount = tags.filter(tag => videoTags.includes(tag)).length;
+            return { id: doc.id, ...data, matchCount };
+        });
+
+
+        // Sort videos by the number of matching tags in descending order
+        const sortedVideos = videos.sort((a, b) => b.matchCount - a.matchCount);
+        const limitedVideos = sortedVideos.slice(0, 60);
+        return limitedVideos;
+
+    } catch (error) {
+        console.error('Error fetching document:', error);
+        throw error;
+    }
+}
+
+
 
 
 
 module.exports = {
     queryBuilder,
     getTotalDocumentCountFunc,
-    getTotalDocumentCountFuncQuery
+    getTotalDocumentCountFuncQuery,
+    getRelatedVideos
 };

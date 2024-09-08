@@ -186,7 +186,7 @@ const {
     randomPiclist,
 } = require("../db_query/PicsQuery");
 const tagJSON = require("../JsonData/TagsDetail.json");
-const { getTotalDocumentCountFunc, queryBuilder, getTotalDocumentCountFuncQuery } = require('../Utils/desikahaniya.js');
+const { getTotalDocumentCountFunc, queryBuilder, getTotalDocumentCountFuncQuery, getRelatedVideos } = require('../Utils/desikahaniya.js');
 
 
 
@@ -600,44 +600,6 @@ router.post("/videoPageData", async (req, res) => {
             }
 
             return { id: doc.id, ...doc.data() };
-        } catch (error) {
-            console.error('Error fetching document:', error);
-            throw error;
-        }
-    }
-
-    async function getRelatedVideos(tags) {
-
-
-        function getRandomElement(arr) {
-            if (arr.length === 0) {
-                return undefined; // or handle empty array case as needed
-            }
-            const randomIndex = Math.floor(Math.random() * arr.length);
-            return arr[randomIndex];
-        }
-
-        try {
-            let query = db.collection('Desi_Porn_Videos')
-                .where('tags', 'array-contains', getRandomElement(tags))
-                .orderBy('timestamp', 'desc');
-
-            const videosSnapshot = await query.limit(60).get();
-
-
-            const videos = videosSnapshot.docs.map(doc => {
-                const data = doc.data();
-                const videoTags = data.tags || [];
-                const matchCount = tags.filter(tag => videoTags.includes(tag)).length;
-                return { id: doc.id, ...data, matchCount };
-            });
-
-
-            // Sort videos by the number of matching tags in descending order
-            const sortedVideos = videos.sort((a, b) => b.matchCount - a.matchCount);
-            const limitedVideos = sortedVideos.slice(0, 60);
-            return limitedVideos;
-
         } catch (error) {
             console.error('Error fetching document:', error);
             throw error;
