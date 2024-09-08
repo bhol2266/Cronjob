@@ -132,7 +132,9 @@ async function getRelatedVideos(tags) {
         let query = db.collection('Desi_Porn_Videos')
             .where('publish', '==', true)
             .where('tags', 'array-contains', getRandomElement(tags))
+            .limit(150)
             .orderBy('timestamp', 'desc');
+
 
         const videosSnapshot = await query.limit(60).get();
 
@@ -147,7 +149,7 @@ async function getRelatedVideos(tags) {
 
         // Sort videos by the number of matching tags in descending order
         const sortedVideos = videos.sort((a, b) => b.matchCount - a.matchCount);
-        const limitedVideos = sortedVideos.slice(0, 60);
+        const limitedVideos = sortedVideos.slice(0, 100);
         return limitedVideos;
 
     } catch (error) {
