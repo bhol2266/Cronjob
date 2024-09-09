@@ -1,5 +1,5 @@
 const { admin_DesiGirls_Videochat2 } = require("../../firebase.js");
-const {indianWomenNames,imagesArray}= require("../../config/dataResource.js");
+const { indianWomenNames, imagesArray } = require("../../config/dataResource.js");
 
 
 // Get a reference to the FCM messaging service
@@ -27,9 +27,8 @@ exports.DesiGirls_VideoChat2_Notification = async () => {
       }
       const notiObject = {
         title: "Hey Desi Girls lovers!",
-        body: "💋"+getRandomIndianWomenName()+" has opened a live broadcast, join now!💋",
-        image:getRandomIndianImage(),
-        icon: "app_icon",
+        body: "💋" + getRandomIndianWomenName() + " has opened a live broadcast, join now!💋",
+        image: getRandomIndianImage(),
       };
 
       const extradata = {
@@ -39,9 +38,11 @@ exports.DesiGirls_VideoChat2_Notification = async () => {
       const payload = {
         notification: notiObject,
         data: extradata,
+        topic: '/topics/all'
+
       };
       // Send the notification to all devices
-      messaging.sendToTopic("/topics/all", payload)
+      messaging.send(payload)
         .then((response) => {
           console.log(
             "Successfully sent notification: Live Desi Girls VideoChat 2",

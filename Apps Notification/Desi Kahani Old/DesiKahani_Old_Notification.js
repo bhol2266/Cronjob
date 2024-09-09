@@ -39,28 +39,22 @@ exports.desiKahani_Old_Notification = async () => {
         if (error) {
           console.error('Error writing document', error);
         } else {
-    
-          // Define the notification payload
-          const notiObject = {
-            title: obj.Title,
-            body: "पूरी कहानी पढ़ें",
-            image: imageUrl,
-            icon: "app_icon",
-          };
-    
-          const extradata = {
-            KEY1: "Notification_Story",
-          };
-    
+
           const payload = {
-            notification: notiObject,
-            data: extradata,
-    
+            notification: {
+              title: obj.Title,
+              body: "पूरी कहानी पढ़ें",
+              image: imageUrl,
+            },
+            data: {
+              KEY1: "Notification_Story",
+            },
+            topic: '/topics/all'
           };
-    
-    
+
+
           // Send the notification to all devices
-          messaging.sendToTopic('/topics/all', payload)
+          messaging.send(payload)
             .then((response) => {
               console.log('Successfully sent notification: Desi Kahani Old', response);
             })
@@ -70,7 +64,7 @@ exports.desiKahani_Old_Notification = async () => {
         }
       });
 
-    }{
+    } else{
       console.log("Desi Kahaniya offline Notification is Disabled from Admin");
     }
   });
@@ -80,7 +74,7 @@ exports.desiKahani_Old_Notification = async () => {
 
 
 
- 
+
 
 
 

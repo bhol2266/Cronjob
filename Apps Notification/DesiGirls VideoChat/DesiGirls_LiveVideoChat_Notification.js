@@ -29,7 +29,6 @@ exports.DesiGirls_VideoChat_Notification = async () => {
         title: "Hey Desi Girls lovers!",
         body: "💋"+getRandomIndianWomenName()+" has opened a live broadcast, join now!💋",
         image:getRandomIndianImage(),
-        icon: "app_icon",
       };
 
       const extradata = {
@@ -39,10 +38,12 @@ exports.DesiGirls_VideoChat_Notification = async () => {
       const payload = {
         notification: notiObject,
         data: extradata,
+        topic: '/topics/all'
+
       };
       // Send the notification to all devices
-      messaging.sendToTopic("/topics/all", payload)
-        .then((response) => {
+      messaging.send(payload)
+      .then((response) => {
           console.log(
             "Successfully sent notification: DesiGirls VideoChat",
             response

@@ -29,7 +29,6 @@ exports.ChatHub_Notification = async () => {
         title: "Hey Sexy Girls lovers!",
         body: "💋"+getRandomIndianWomenName()+" has opened a live broadcast, join now!💋",
         image:getRandomIndianImage(),
-        icon: "app_icon",
       };
 
       const extradata = {
@@ -39,9 +38,11 @@ exports.ChatHub_Notification = async () => {
       const payload = {
         notification: notiObject,
         data: extradata,
+        topic: '/topics/all'
+
       };
       // Send the notification to all devices
-      messaging.sendToTopic("/topics/all", payload)
+      messaging.send(payload)
         .then((response) => {
           console.log(
             "Successfully sent notification: ChatHub - Random Video Chat",
