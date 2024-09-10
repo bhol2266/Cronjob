@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { checkforLatestStories,saveSingleStory_AdultDesiKahani_Firestore } = require('./config/DesiKahani_FirestoreUtils.js');
+const { checkforLatestStories, saveSingleStory_AdultDesiKahani_Firestore } = require('./config/DesiKahani_FirestoreUtils.js');
 const { showAppsNotification } = require('./config/AppNotifications');
 const { runDeployhooks } = require('./config/DeployHook');
 const desiKahaniyaRoutes = require('./routes/desikahaniya.js');
@@ -20,6 +20,7 @@ const {
   checkStoryItemExists,
   getStoryItems_forApp,
 } = require("./db_query/story_detailsQuery");
+const { sendWebsitesNotification } = require("./config/WebsitesNotification.js");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -28,7 +29,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
- 
+
 
 
 
@@ -164,3 +165,12 @@ app.listen(port, () => {
 showAppsNotification();
 runDeployhooks();
 checkforLatestStories();
+
+
+// Example usage
+const deviceToken = 'your-device-token';
+const notificationTitle = 'Hello';
+const notificationBody = 'This is a test notification';
+
+
+sendWebsitesNotification();

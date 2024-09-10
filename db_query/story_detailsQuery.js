@@ -216,6 +216,19 @@ exports.singleRandomStoryForNotification = async function () {
 }
 
 
+//for web notification
+exports.getLatestStory = async function () {
+    try {
+        // Find the latest story by sorting 'completeDate' in descending order and limiting to 1 result
+        const latestStory = await StoryItemModel.findOne().sort({ 'completeDate': -1 });
+        return latestStory;
+    } catch (error) {
+        console.error('Error fetching latest story:', error);
+        return null;
+    }
+}
+
+
 
 
 
