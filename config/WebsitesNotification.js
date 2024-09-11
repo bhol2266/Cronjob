@@ -14,8 +14,14 @@ async function HindiSexStory_Website() {
             body: "पूरी कहानी पढ़ें",
             image: "https://www.hindisexstory.app/android-chrome-192x192.png",
         },
+        data: {
+            // Include custom data field for navigation link
+            link: story.url || 'https://www.hindisexstory.app', // Ensure 'story.url' contains the URL you want to navigate to
+        },
         topic: 'all'
     };
+
+
 
 
 
@@ -29,6 +35,8 @@ async function HindiSexStory_Website() {
 
 async function sendWebsitesNotification() {
 
+
+    HindiSexStory_Website()
 
     cron.schedule(
         "0 10 * * *",
