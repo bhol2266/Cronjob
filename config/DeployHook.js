@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cron = require('node-cron');
+const { pushLatestVideos } = require('../Utils/desikahaniya');
 
 const desiKahani_DeployHook = "https://www.hindisexstory.app/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf";
 const chutlunds_revalidateHook = "https://chutlunds.com/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf";
@@ -17,19 +18,24 @@ async function triggerDeployHook(url) {
   }
 }
 
-function runDeployhooks() {
+async function runDeployhooks() {
+
+
   // Revalidate cron job running daily at midnight
   cron.schedule("0 0 * * *", async () => {
-    await triggerDeployHook(desiKahani_DeployHook);
+    await pushLatestVideos();
     await triggerDeployHook(chutlunds_revalidateHook);
     await triggerDeployHook(fuckvideolive_revalidateHook);
+    await triggerDeployHook(desiKahani_DeployHook);
+
   });
 
   // Another cron job running daily at noon
   cron.schedule('0 12 * * *', async () => {
-    await triggerDeployHook(desiKahani_DeployHook);
+    await pushLatestVideos();
     await triggerDeployHook(chutlunds_revalidateHook);
     await triggerDeployHook(fuckvideolive_revalidateHook);
+    await triggerDeployHook(desiKahani_DeployHook);
   });
 }
 

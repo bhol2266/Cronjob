@@ -133,7 +133,7 @@ async function getRelatedVideos(tags) {
             .where('publish', '==', true)
             .where('tags', 'array-contains', getRandomElement(tags))
             .orderBy('timestamp', 'desc');
-            
+
 
         const videosSnapshot = await query.limit(100).get();
 
@@ -157,6 +157,70 @@ async function getRelatedVideos(tags) {
 }
 
 
+async function pushLatestVideos() {
+    // this is for updating videos on hindisexstory.app
+
+    try {
+        const collectionRef = db.collection('Desi_Porn_Videos'); // Replace with your collection name
+
+        // Build the query
+        const query = collectionRef
+            .where('uploaded', '==', true) // Filter by field
+            .orderBy('timestamp', 'desc') // Sort by timestamp, oldest to newest
+            .limit(20);
+
+        // Execute the query
+        const snapshot = await query.get();
+
+        if (snapshot.empty) {
+            console.log('No matching documents.');
+            return [];
+        }
+
+        // Process the documents
+        const documents = [];
+        snapshot.forEach(doc => {
+            documents.push({ id: doc.id, ...doc.data() });
+        });
+
+
+        for (let index = 0; index < documents.length; index++) {
+            const doc = documents[index];
+            await updateDocumentPublishById(doc.id)
+        }
+
+
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        throw error;
+    }
+}
+
+
+
+
+async function updateDocumentPublishById(docId) {
+    try {
+        if (!docId) {
+            console.log('No document ID provided.');
+            return;
+        }
+
+        const docRef = db.collection('Desi_Porn_Videos').doc(docId); // Replace with your collection name
+
+        // Update the document field
+        await docRef.update({
+            publish: true,
+            timestamp: new Date().toISOString() // Set timestamp to the current server time
+        });
+        console.log(`Document with ID ${docId} updated successfully.`);
+    } catch (error) {
+        console.error('Error updating document:', error);
+        throw error;
+    }
+}
+
+
 
 
 
@@ -164,5 +228,6 @@ module.exports = {
     queryBuilder,
     getTotalDocumentCountFunc,
     getTotalDocumentCountFuncQuery,
-    getRelatedVideos
+    getRelatedVideos,
+    pushLatestVideos
 };
