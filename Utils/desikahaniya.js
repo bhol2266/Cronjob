@@ -166,6 +166,7 @@ async function pushLatestVideos() {
         // Build the query
         const query = collectionRef
             .where('uploaded', '==', true) // Filter by field
+            .where('publish', '==', false)
             .orderBy('timestamp', 'desc') // Sort by timestamp, oldest to newest
             .limit(20);
 

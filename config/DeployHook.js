@@ -19,6 +19,7 @@ async function triggerDeployHook(url) {
 }
 
 async function runDeployhooks() {
+  await pushLatestVideos();
 
 
   // Revalidate cron job running daily at midnight
