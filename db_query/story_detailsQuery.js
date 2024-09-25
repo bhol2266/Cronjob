@@ -3,8 +3,6 @@ const StoryItemModel = require('../models/StoryItemModel') //homepage story item
 
 
 exports.checkStoryExists = async function (href) {
-
-
     try {
         const storyExist = await StoryModel.findOne({ href: href })
         return storyExist
@@ -12,8 +10,6 @@ exports.checkStoryExists = async function (href) {
         return null
 
     }
-
-
 
 }
 
@@ -84,6 +80,43 @@ exports.getStoryItemByPage = async function (page) {
 
     try {
         const items = await StoryItemModel.find().sort({ 'completeDate': -1 }).skip(skip).limit(12)
+        return items
+    } catch (error) {
+        return null
+    }
+
+}
+
+
+exports.updateDocumentTitle = async (oldTitle, newTitle) => {
+    try {
+        console.log(oldTitle, newTitle);
+
+        const result = await StoryModel.updateOne(
+            { Title: oldTitle },
+            { $set: { newTitle: newTitle } }, // Set the newTitle field
+            // Create or update the new field
+        );
+
+        // Check if the update was successful
+        if (result.modifiedCount > 0) {
+            console.log('Update successful:', result);
+            return { success: true, message: 'Update successful' };
+        } else {
+            console.log('No documents were updated.');
+            return { success: false, message: 'No documents were updated' };
+        }
+    } catch (error) {
+        console.error('Error updating document:', error);
+        return { success: false, message: 'Error updating document' };
+    }
+};
+
+
+exports.getStoryItemforUpdatingTitle = async function () {  //remove after use
+
+    try {
+        const items = await StoryModel.find().sort({ 'completeDate': -1 }).limit(5)
         return items
     } catch (error) {
         return null

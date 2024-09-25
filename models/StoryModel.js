@@ -5,6 +5,7 @@ const db_desiakahaniya=require('../config/desiKahaniya_dbConnect')
 const StoryDetailSchema = new mongoose.Schema({
 
     Title: {type: String},
+    newTitle: {type: String},
     href:  {type: String, unique: true},
     author: { name: { type: String }, href: { type: String } },
     date: { type: String },

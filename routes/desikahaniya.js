@@ -30,6 +30,8 @@ const {
     getStoryItemByDateCOUNT,
     deleteVideoDetail,
     getStoryItems_forApp,
+    getStoryItemforUpdatingTitle,
+    updateDocumentTitle,
 } = require("../db_query/story_detailsQuery");
 
 const {
@@ -264,6 +266,40 @@ router.post("/HomepageStoriesUpdate", async (req, res) => {
                 finalDataArray: finalDataArray_final,
                 pagination_nav_pages: pagination_nav_pages,
             },
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error });
+    }
+});
+
+
+router.post("/getStoriesForUpdatingTitle", async (req, res) => {  //remove after use
+    const { page } = req.body;
+
+    let finalDataArray_final = [];
+    try {
+        finalDataArray_final = await getStoryItemforUpdatingTitle();
+        return res.status(200).json({
+            success: true,
+            data: {
+                finalDataArray: finalDataArray_final,
+            },
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({ success: false, message: error });
+    }
+});
+
+
+router.post("/updateNewStoryTitle", async (req, res) => {  //remove after use
+    const { oldTitle, newTitle } = req.body;
+
+    try {
+        await updateDocumentTitle(oldTitle, newTitle);
+        return res.status(200).json({
+            success: true,
         });
     } catch (error) {
         console.log(error);
