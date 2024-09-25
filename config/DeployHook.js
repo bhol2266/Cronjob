@@ -4,6 +4,7 @@ const { pushLatestVideos } = require('../Utils/desikahaniya');
 
 const desiKahani_DeployHook = "https://www.hindisexstory.app/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf";
 const chutlunds_revalidateHook = "https://chutlunds.com/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf";
+const chutlunds2_revalidateHook = "https://chutlunds2.com/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf";
 const fuckvideolive_revalidateHook = "https://www.fuckvideo.live/api/revalidate?secret=sadfsadfdsafdsafasdfsdafdsafsadfdsaf";
 
 const chutlundscom_DeployHook = "https://api.vercel.com/v1/integrations/deploy/prj_4YCm6CdlF3Nhix1PzrtyLh6zaPOu/EZQugZ0DVi";
@@ -24,6 +25,7 @@ async function runDeployhooks() {
   cron.schedule("0 0 * * *", async () => {
     await pushLatestVideos();
     await triggerDeployHook(chutlunds_revalidateHook);
+    await triggerDeployHook(chutlunds2_revalidateHook);
     await triggerDeployHook(fuckvideolive_revalidateHook);
     await triggerDeployHook(desiKahani_DeployHook);
 
@@ -33,6 +35,7 @@ async function runDeployhooks() {
   cron.schedule('0 12 * * *', async () => {
     await pushLatestVideos();
     await triggerDeployHook(chutlunds_revalidateHook);
+    await triggerDeployHook(chutlunds2_revalidateHook);
     await triggerDeployHook(fuckvideolive_revalidateHook);
     await triggerDeployHook(desiKahani_DeployHook);
   });
