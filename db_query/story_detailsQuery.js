@@ -116,10 +116,12 @@ exports.updateDocumentTitle = async (oldTitle, newTitle) => {  //remove after us
 exports.getStoryItemforUpdatingTitle = async function () {  //remove after use
 
     try {
-        const items = await StoryModel.find().sort({ 'completeDate': -1 }).limit(5)
-        return items
+        const items = await StoryModel.find({ newType: { $exists: false } })
+            .sort({ 'completeDate': -1 })
+            .limit(7);
+        return items;
     } catch (error) {
-        return null
+        return null;
     }
 
 }
