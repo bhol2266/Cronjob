@@ -88,7 +88,7 @@ exports.getStoryItemByPage = async function (page) {
 }
 
 
-exports.updateDocumentTitle = async (oldTitle, newTitle) => {
+exports.updateDocumentTitle = async (oldTitle, newTitle) => {  //remove after use
     try {
         console.log(oldTitle, newTitle);
 
@@ -116,7 +116,7 @@ exports.updateDocumentTitle = async (oldTitle, newTitle) => {
 exports.getStoryItemforUpdatingTitle = async function () {  //remove after use
 
     try {
-        const items = await StoryModel.find().sort({ 'completeDate': -1 }).limit(5)
+        const items = await StoryModel.find().sort({ 'completeDate': -1 }).limit(500)
         return items
     } catch (error) {
         return null
